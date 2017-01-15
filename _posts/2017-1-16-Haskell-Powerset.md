@@ -40,7 +40,7 @@ public static <T> Set<Set<T>> powerSet(Set<T> originalSet) {
 }  
 ```
 
-Before you start reading and understanding the bits and nuance of the above snippet, I would like 
+Before you start reading and understanding the bits and nuances of the above snippet, I would like 
 to stress on the point that while this code is algorithmically correct, looking at it doesn't give you any information about the 
 definition of a powerset. It represents the thought process that would go through your mind while
 building the powerset one by one at a time.

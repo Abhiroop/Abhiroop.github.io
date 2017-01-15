@@ -19,7 +19,7 @@ So now we are tasked with finding out the powerset for a given set of elements.
 
 In a general imperative approach we would define the powerset in any imperative language (like Java) like this:
 
-```Java
+```java
 public static <T> Set<Set<T>> powerSet(Set<T> originalSet) {
     Set<Set<T>> sets = new HashSet<Set<T>>();
     if (originalSet.isEmpty()) {
@@ -50,7 +50,7 @@ down approach of expressing your problem statement and defining it in terms of f
 
 In Haskell the solution to the same question looks like this:
 
-```Haskell
+```haskell
 powerset = filterM (const [True,False])
 ```
 
@@ -63,7 +63,7 @@ First of all this is written in point free style Haskell.
 The way to understand this definition is to study the source code of `filterM`.
 
 But before that lets attempt to define `filterM`:
-```Haskell
+```haskell
 import Control.Monad
 
 filterM' :: (Monad m) => (a -> m Bool) -> [a] -> m [a]
@@ -79,7 +79,7 @@ This definition is different from the real implementation of `filterM`.
 
 But works absolutely fine. Lets test it out:
 
-```Haskell
+```haskell
 λ> filterM' (const [True,False]) [1,2,3]
 [[1,2,3],[1,2],[1,3],[1],[2,3],[2],[3],[]]
 ```
@@ -89,12 +89,12 @@ Before going through it step by step lets us understand the 2 most important cat
 First for beginners who haven't used the `do` notation in monads.
 
 This step:
-```Haskell
+```haskell
 b <- p x
 ```
 when applied, will result in `[True,False]`. In the first iteration `b` assumes the value of `True` and then `False` and followed by concatting the results of the two. The definition of `bind` for the List monad will help you understand more:
 
-```Haskell
+```haskell
 instance Monad [] where  
     return x = [x]  
     xs >>= f = concat (map f xs)  
@@ -110,7 +110,7 @@ liftM f m1              = do { x1 <- m1; return (f x1) }
 ```
 
 Taking this out for a small spin:
-```Haskell
+```haskell
 λ> liftM ('h':) ["ello","ey","i","otel"]
 ["hello","hey","hi","hotel"]
 ```

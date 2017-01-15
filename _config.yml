@@ -71,6 +71,8 @@ redcarpet:
     - tables
     - lax_spacing
     - with_toc_data
+    - superscript
+    - quote
 
 
 

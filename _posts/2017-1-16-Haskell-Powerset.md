@@ -9,11 +9,11 @@ So for a given set the number of possible subsets are 2<sup>n</sup>.
 
 Example:
 
-Given a set ```S = {a,b,c}```.
+Given a set `S = {a,b,c}`.
 
 The powerset is defined as:
 
-```P(S) = { {}, {a}, {b}, {c}, {a, b}, {a, c}, {b, c}, {a, b, c} }```.
+`P(S) = { {}, {a}, {b}, {c}, {a, b}, {a, c}, {b, c}, {a, b, c} }`.
 
 So now we are tasked with finding out the powerset for a given set of elements.
 
@@ -62,7 +62,7 @@ First of all this is written in point free style Haskell.
 
 The way to understand this definition is to study the source code of `filterM`.
 
-But before that lets attempt to define ```filterM```:
+But before that lets attempt to define `filterM`:
 ```
 import Control.Monad
 
@@ -75,7 +75,7 @@ filterM' p (x:xs) =
               else            rest
 ```
 
-This definition is different from the real implementation of ```filterM```.
+This definition is different from the real implementation of `filterM`.
 
 But works absolutely fine. Lets test it out:
 
@@ -92,8 +92,7 @@ This step:
 ```
 b <- p x
 ```
-when applied, will result in ```[True,False]```. In the first iteration ```b``` assumes the value of ```True``` and then ```False``` and followed by concatting the results of the two. The definition 
-of ```bind``` for the List monad will help you understand more:
+when applied, will result in `[True,False]`. In the first iteration `b` assumes the value of `True` and then `False` and followed by concatting the results of the two. The definition of `bind` for the List monad will help you understand more:
 
 ```
 instance Monad [] where  
@@ -102,9 +101,9 @@ instance Monad [] where
     fail _ = []  
 ```
 
-The second catch is ```liftM```
+The second catch is `liftM`
 
-```liftM``` basically promotes a function to a Monad. Super simple definition of ```liftM``` below:
+`liftM` basically promotes a function to a Monad. Super simple definition of `liftM` below:
 ```
 liftM   :: (Monad m) => (a1 -> r) -> m a1 -> m r
 liftM f m1              = do { x1 <- m1; return (f x1) }

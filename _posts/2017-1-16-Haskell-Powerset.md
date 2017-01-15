@@ -56,7 +56,7 @@ powerset = filterM (const [True,False])
 
 And thats it!
 
-The main motivation of this article is to explain what is going on above, as it might not be immediately apparent how is the recursive machinery operating underneath. But what a beautiful and elegant looking function!!
+The main motivation of this article is to explain what is going on above, as it might not be immediately apparent that how is the recursive machinery operating underneath. But what a beautiful and elegant looking function!!
 
 First of all this is written in point free style Haskell.
 

@@ -9,7 +9,9 @@ So for a given set the number of possible subsets are 2<sup>n</sup>.
 
 Example:
 
-Given a set `S = {a,b,c}`.
+Given a set 
+`S = {a,b,c}`.
+
 The powerset is defined as:
 
 `P(S) = { {}, {a}, {b}, {c}, {a, b}, {a, c}, {b, c}, {a, b, c} }`.

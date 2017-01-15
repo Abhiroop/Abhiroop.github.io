@@ -92,7 +92,7 @@ This step:
 ```haskell
 b <- p x
 ```
-when applied, will result in `[True,False]`. In the first iteration `b` assumes the value of `True` and then `False` and followed by concatting the results of the two. The definition of `bind` for the List monad will help you understand more:
+when applied, will result in `[True,False]`. In the first iteration `b` assumes the value of `True` and then `False` and follows by concatenating the results of the two. The definition of `bind` for the List monad will help you understand more:
 
 ```haskell
 instance Monad [] where  

@@ -5,7 +5,7 @@ title: Powerset in Haskell
 
 A power set is simply defined as *all the subsets of a set*.
 
-So for a given set the number of possible subsets are 2^n.
+So for a given set the number of possible subsets are 2^(n).
 
 Example:
 

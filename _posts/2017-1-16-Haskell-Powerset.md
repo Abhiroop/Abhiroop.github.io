@@ -115,7 +115,7 @@ Taking this out for a small spin:
 ["hello","hey","hi","hotel"]
 ```
 
-And now if you take a look at the definition of `filterM`, the entire definition will not look very differnt from the definition of plain old `filter` except for the lifting of Monads bit.
+And now if you take a look at the definition of `filterM`, the entire definition will not look very different from the definition of plain old `filter` except for the lifting of Monads bit.
 
 Still to simplify your understanding I am going to explain the `filterM` monad step by step using a small list `[1,2,3]`
 

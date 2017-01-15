@@ -62,7 +62,7 @@ First of all this is written in point free style Haskell.
 
 The way to understand this definition is to study the source code of `filterM`.
 
-But before that lets attempt to define `filterM`:
+But before that lets attempt to define `filterM` ourselves:
 ```haskell
 import Control.Monad
 

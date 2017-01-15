@@ -4,12 +4,12 @@ title: About
 permalink: /about/
 ---
 
-Some information about you!
+I write code in Haskell or Clojure. I like types!
 
-### More Information
+### !!
 
-A place to include any other types of information that you'd like to include about yourself.
+Get in touch if you want to talk about laziness, monads, DSLs, macros and more
 
 ### Contact me
 
-[email@domain.com](mailto:email@domain.com)
+[asiamgenius@gmail.com](mailto:asiamgenius@gmail.com)

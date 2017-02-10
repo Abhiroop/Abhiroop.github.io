@@ -59,6 +59,18 @@ permalink: /:title/
 version: v1.2.0
 
 
+#### Markdown Processors
+markdown: redcarpet
+redcarpet:
+  extensions:
+    - superscript
+    - no_intra_emphasis
+    - autolink
+    - strikethrough
+    - tables
+    - lax_spacing
+    - with_toc_data
+    - quote
 
 
 

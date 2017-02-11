@@ -1,5 +1,5 @@
 ---
 layout: post
-title: Finger Trees : The ultimate data structure?
+title: Finger Tree - The ultimate data structure?
 ---
 

@@ -31,7 +31,7 @@ Now the point of interest for us here is the type parameter `v`. The metadata in
 1. A list (linked list to be precise) with logarithmic random access.
 2. A priority queue with logarithmic peek.
 
-We know a normal `xs!!n` operation on a list in any programming language runs at `O(n)`. However we will use a simple trick of annotating each subtree with its **size**. The size of a tree is the number of nodes in the tree.Hence the metadata of a tree will look like this:
+We know a normal `xs!!n` operation on a list in any programming language runs at `O(n)`. However we will use a simple trick of annotating each subtree with its **size**. The size of a tree is the number of nodes in the tree i.e the sum of number of nodes in its left and right child. Hence the metadata of a tree will look like this:
 ```
          4
        /   \
@@ -42,14 +42,14 @@ We know a normal `xs!!n` operation on a list in any programming language runs at
 And of course the leaves will contain the actual value. So whenever we are asked to access the nth element we do this: 
 ```
 if n < size(left child node) 
-    go left and look for n
+    go left and look for nth node
 else
-    go right and look for n - size(left child node)
+    go right and look for [n - size(left child node)]th node
 Break recursion at the leaf node. 
 ```  
 Take some time and evaluate this approach.
 
-Before starting with the actual code lets think about the priority queue to. We will model the priority queue like a [tournament tree](https://en.wikipedia.org/wiki/Selection_algorithm#Tournament_Algorithm). Here lets represent the priority using integral numbers. The lower the number, the higher the priority. So if we model the same using our Finger Tree the type parameter `v` will now represent the minimum of its 2 subtrees. Hence:
+Before starting with the actual code lets think about the priority queue too. We will model the priority queue like a [tournament tree](https://en.wikipedia.org/wiki/Selection_algorithm#Tournament_Algorithm). Here lets represent the priority using integral numbers. The lower the number, the higher the priority. So if we model the same using our `Finger Tree` the type parameter `v` will now represent the minimum of its 2 children. Hence:
 ```
         3
       /   \
@@ -65,9 +65,9 @@ else
     recurse down right child
 Break recursion at the leaf node of course!!
 ```
-Thats laughably simple. Right? The trick is unifying the above 2 metadata functions for priority queue and random access list. And the grand unifier of it all is the elegant Monoid typeclass.
+Thats laughably simple. Right? The trick is unifying the above 2 metadata functions for priority queue and random access list. And the grand unifier of it all is the elegant `Monoid` typeclass.
 
-A dull definition of a monoid is a `a binary associative operation with an identity.` However if we look at the typeclass definition of Monoid:
+A succint definition of a Monoid is `a binary associative operation with an identity.` Lets look at the typeclass definition of Monoid:
 ```haskell
 class Monoid a where
   mempty :: a
@@ -144,7 +144,7 @@ instance (Tag v, Measured v a) => Measured v (Tree v a) where
 leaf :: Measured v a => a -> a -> Tree v a
 leaf a priority = Leaf (measure priority) a
 ```
-And thats it! You have your finger tree defined. As you had more operations and extend it to answer more type of queries instantiate the `Monoid` typeclass and figure out ways of combining the elements into action. Have a look at the random access function and the priority queue lookup function together. They are just super simple Haskell implementations of the pseudocode deifned above:
+And thats it! You have your finger tree defined. As you encounter more operations and extend it to answer more type of queries instantiate the `Monoid` typeclass and figure out ways of combining the elements into action. Have a look at the random access function and the priority queue lookup function together. They are just super simple Haskell implementations of the pseudocode deifned above:
 ```haskell
 (!!!) :: Tag Size => Tree Size a-> Int -> a
 (Leaf _ a)     !!! 0 = a
@@ -163,4 +163,4 @@ winner t = go t
 
 I have also implemented the search functionality in my [github repo](https://github.com/Abhiroop/HaskAl) which actually unifies the above 2 functions into an even higher abstraction, but the above examples should drive the thought to your head.
 
-The above implementations from Heinrich Apfelmus' amazing blog on Finger Trees. However the code in his blog does not type check. I believe he wanted to expose the ideas majorly. I made sure the code mentioned here does type check with GHC 7.10 and it actually required some effort to fix the types. And adding a new typeclass actually did modify the type signature quite a bit and those signatures will tell you a lot about the relation between these structures. You can go through the code [here](https://github.com/Abhiroop/HaskAl/blob/master/FingerTree.hs). I urge interested readers to actually study the [original paper](http://www.staff.city.ac.uk/~ross/papers/FingerTree.pdf) by Ralf Hinze and Ross Patterson and it actually happens to be one of the more accessible papers on functional programming and Haskell.
+The above implementations are from Heinrich Apfelmus' amazing blog on Finger Trees. However the code in his blog does not type check. I believe he wanted to expose the ideas majorly. I made sure the code mentioned here does type check with GHC 7.10 and it actually required some effort to fix the types. And adding a new typeclass actually did modify the type signature a bit and those signatures will tell you a lot about the relation between these structures. You can go through the code [here](https://github.com/Abhiroop/HaskAl/blob/master/FingerTree.hs). I urge interested readers to actually study the [original paper](http://www.staff.city.ac.uk/~ross/papers/FingerTree.pdf) by Ralf Hinze and Ross Patterson and it actually happens to be one of the more accessible papers on functional programming and Haskell.

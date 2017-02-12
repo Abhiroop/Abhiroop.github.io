@@ -121,7 +121,8 @@ instance Monoid Priority where
   Priority x `mappend` Priority y = Priority (min x y)
 
 ```
-Now this gives me the amazing power to define by branch function as a smart constructor like this:
+Take a while to look above and understand the `mempty` element. And check how both the instances satisfies left identity, right identity and associativity laws of Monoids.
+Now this gives me the amazing power to define my branch function as a smart constructor like this:
 ```haksell
 branch :: (Tag v, Monoid v) => Tree v a -> Tree v a -> Tree v a
 branch x y = Branch (tag x <> tag y) x y

@@ -145,7 +145,7 @@ instance (Tag v, Measured v a) => Measured v (Tree v a) where
 leaf :: Measured v a => a -> a -> Tree v a
 leaf a priority = Leaf (measure priority) a
 ```
-And thats it! You have your finger tree defined. As you encounter more operations and extend it to answer more type of queries instantiate the `Monoid` typeclass and figure out ways of combining the elements into action. Have a look at the random access function and the priority queue lookup function together. They are just super simple Haskell implementations of the pseudocode deifned above:
+And thats it! You have your finger tree defined. As you encounter more operations and extend it to answer more type of queries, instantiate the `Monoid` typeclass and figure out ways of combining the elements into action. Have a look at the random access function and the priority queue lookup function together. They are just super simple Haskell implementations of the pseudocode deifned above:
 ```haskell
 (!!!) :: Tag Size => Tree Size a-> Int -> a
 (Leaf _ a)     !!! 0 = a

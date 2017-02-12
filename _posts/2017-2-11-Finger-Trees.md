@@ -57,7 +57,7 @@ Before starting with the actual code lets think about the priority queue too. We
     / \   / \
    8   5 7   3
 ```
-Thats a simple tournament tree with winning strategy being the function `min`, which leads to the super simple recirsion:
+Thats a simple tournament tree with winning strategy being the function `min`, which leads to the super simple recursion:
 ```
 if priority(node) = priority (left child)
     recurse down left child

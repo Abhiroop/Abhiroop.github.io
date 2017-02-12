@@ -128,22 +128,11 @@ branch :: (Tag v, Monoid v) => Tree v a -> Tree v a -> Tree v a
 branch x y = Branch (tag x <> tag y) x y
 ```
 
-And for the leaf it is dead simple to get the tag from the element inserted. We will capture this behavior in a multi parameter typeclass(using a GHC extension):
+And for the leaves it is dead simple to construct the leaf nodes simply using the normal constructors. The `Size` and `Partition` types are already instances of monoids, like:
 ```haskell
-class Monoid v => Measured v a where
-    measure :: a -> v
+Leaf (Size 1) 5     --in case of list
 
-instance Measured Size Int where
-    measure _ = Size 1           -- the leaf elemnt of Size 1
-
-instance Measured Priority Int where
-    measure a = Priority a       -- priority of the element as entered
-
-instance (Tag v, Measured v a) => Measured v (Tree v a) where
-    measure = tag
-
-leaf :: Measured v a => a -> a -> Tree v a
-leaf a priority = Leaf (measure priority) a
+Leaf (Priority 2) 4 --in case of a priority queue
 ```
 And thats it! You have your finger tree defined. As you encounter more operations and extend it to answer more type of queries, instantiate the `Monoid` typeclass and figure out ways of combining the elements into action. Have a look at the random access function and the priority queue lookup function together. They are just super simple Haskell implementations of the pseudocode deifned above:
 ```haskell

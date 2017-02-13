@@ -134,7 +134,7 @@ Leaf (Size 1) 5     --in case of list
 
 Leaf (Priority 2) 4 --in case of a priority queue
 ```
-And thats it! You have your finger tree defined. As you encounter more operations and extend it to answer more type of queries, instantiate the `Monoid` typeclass and figure out ways of combining the elements into action. Have a look at the random access function and the priority queue lookup function together. They are just super simple Haskell implementations of the pseudocode deifned above:
+And thats it! You have your finger tree defined. As you encounter more operations and extend it to answer more type of queries, instantiate the `Monoid` typeclass and figure out ways of combining the elements into action. Have a look at the random access function and the priority queue lookup function together. They are just super simple Haskell implementations of the pseudocode defined above:
 ```haskell
 (!!!) :: Tag Size => Tree Size a-> Int -> a
 (Leaf _ a)     !!! 0 = a

@@ -21,7 +21,7 @@ Analogies are easy to remember and if fully understood, can inspire new research
 
 A smart contract is a program that runs in the blockchain and has its correct execution enforced by the consensus protocol. A smart contract can be thought analogous to an object in OOP terminology. It encapsulates state within itself. This state is manipulated by a set of functions which are called either directly by the clients or indirectly by another smart contracts. Smart contracts are defined using Turing complete languages like [Solidity](https://solidity.readthedocs.io/en/develop/). In this post we will be using Solidity, a static typed language, for all of our examples which will be executing on top of the [Ethereum blockchain](https://www.ethereum.org/). 
 
-The execution semantics of a transaction[1] in the Ethereum block chain should ideally exhibit *atomicity* and *consistency*. The paper by Lu, et al find at fault this very assumption. They pinpoint 4 primary problems existent in the semantics of Smat Contracts. They are:
+The execution semantics of a transaction[1] in the Ethereum block chain should ideally exhibit *atomicity* and *consistency*. The paper by Lu, et al finds at fault this very assumption. They pinpoint 4 primary problems existent in the semantics of Smat Contracts. They are:
 * Transaction-Ordering Dependence
 * Timestamp Dependence
 * Mishandled Exceptions
@@ -50,7 +50,7 @@ contract MarketPlace{
 ```
 Barring the types, the syntax is very similar to vanilla javascript (Never thought I would have to mention javascript in my Haskell blogs :( ). The point of interest are the `buy` and `updatePrice` function. 
 
-Now the names of the functions are pretty descriptive themselves. So forget smart contracts for a moment and lets think in real life. You want to `buy` a product from Amazon at 10$. You decide to go ahead and start paying for the goods. However while you are mentioning your card details, the seller decides to call an `updatePrice` function on the product and change the price to 15$. Now when you actually pay through the payment portal you end up transferring only 10$ because that is the price that you saw, but meanwhile the amount you paid is 5$ short of the amount the product is listed for. So what happens to the state of the transaction? It lies in an insconsistent state. This fact can be used by malicious users to their benefits as defined in the paper bu Lu, et al.  Buyers may have to pay much higher than the observed price when they issue the buy requests. ANd being a decentralized system there is no uniform notion of time in the blockchain. We will talk a lot more about this vulnerability later, and how mitigitaing this is much more difficult than the other vulnerbailities. However, in the meanwhile, let us detail the other vulnerabilities.
+Now the names of the functions are pretty descriptive themselves. So forget smart contracts for a moment and lets think in real life. You want to `buy` a product from Amazon at 10$. You decide to go ahead and start paying for the goods. However while you are mentioning your card details, the seller decides to call an `updatePrice` function on the product and change the price to 15$. Now when you actually pay through the payment portal you end up transferring only 10$ because that is the price that you saw, but meanwhile the amount you paid is 5$ short of the amount the product is listed for. So what happens to the state of the transaction? It lies in an insconsistent state. This fact can be used by malicious users to their benefits as defined in the paper bu Lu, et al.  Buyers may have to pay much higher than the observed price when they issue the buy requests. And being a decentralized system there is no uniform notion of time in the blockchain. We will talk more about this vulnerability later, and how mitigitaing this is much more difficult than the other vulnerbailities. However, in the meanwhile, let us detail the other vulnerabilities.
 
 * **Timestamp Dependence**
 
@@ -58,7 +58,7 @@ This is an age old problem. Researchers have spawned a lot of papers citing the 
 
 * **Mishandled Exceptions**
 
-In etehereum there are multiple ways for a contract to call another. One of them is calling the other contracts via the `send` instruction. If there is an exception raised in the callee contract, it terminates, reverts its state and returns False. Howvere there are cases when the exceptions tends to not get propagated to the caller contract. Research has shown, 27.9% of the contracts do not check the return values after calling other contracts via send. This can render the caller contract to an inconsistent state and we study that in the KoET(KingOfTheEtherThrone) example below.
+In etehereum there are multiple ways for a contract to call another. One of them is calling the other contracts via the `send` instruction. If there is an exception raised in the callee contract, it terminates, reverts its state and returns False. However there are cases when the exceptions tends to not get propagated to the caller contract. Research has shown, 27.9% of the contracts on Ethereum do not check the return values after calling other contracts via send. This can render the caller contract to an inconsistent state and we study that in the KoET(KingOfTheEtherThrone) example below.
 
 ```javascript
 1 function claimThrone(string name) {
@@ -102,7 +102,7 @@ is true, but in a wider sense what is going on is that sequential
 code is running in what is in many senses a concurrent environment.
 ```
 
-While this paper draws an analogy between smart contracts and problems studies in traditional lock based concurrency, it also notes that the locking contract pattern has a significant non-modular design. Also lock based concurrency mechanisms are traditionally not composable. As a result of which we will look at an alternative to lock based concurrency which is known as Transactional Memory.
+While this paper draws an analogy between smart contracts and traditional lock based concurrency, it also notes that the locking contract pattern has a significant non-modular design. Also lock based concurrency mechanisms are traditionally not composable. As a result of which we will look at an alternative to lock based concurrency which is known as Transactional Memory.
 
 **TRANSACTIONAL MEMORY**
 
@@ -114,7 +114,7 @@ atomic {
 ```
 And every code that you write inside this block is executed *atomically*. It is *isolated* from any other form of interaction that might be going around in other threads. And at the end of this all threads are guranteed to see a *consistent* view of the main memory. Sounds similar to ACID gurantees in a database? You are correct. Transactional Memory APIs are extremely simple to understand, however the machinery operating underneath it might be a little complex. It varies from implementation to implementation. The most popular is the Transactional Locking II algorithm as stated in [this paper](http://www.disco.ethz.ch/lectures/fs11/seminar/paper/johannes-2-1.pdf) by Dice, et al. This is a must read paper. However as we are interested in the *lazy* version of STM we will be working with the implementation provided by the paper on [Composable Memory Transactions](http://simonmar.github.io/bib/papers/stm.pdf) by Harris, et al.
 
-Haskell provides something called a `TVar` wherein you encapsulate you state. The APIs provided for operating on this `TVar` are fairly simple:
+Haskell provides something called a `TVar` wherein you encapsulate your state. The APIs provided for operating on this `TVar` are fairly simple:
 ```haskell
 data TVar a
 newTVar   :: a -> STM(TVar a)
@@ -135,6 +135,42 @@ throw :: Exception -> STM a
 catch :: STM a -> (Exception -> STM a) -> STM a
 ``` 
 
-We are primarily interested in the `atomic`
+We are primarily interested in the `atomically` and `throw` functions. The `atomically` function internally converts the actions inside the STM Monad to IO actions which can be executed inside the IO Monad. Now with the APIs in hand, let us try to understand how STM operates under the hood.
+
+Internally, whenever a block of code is executed inside an `atomically` statement, by an individual thread, the GHC runtime creates a *thread local* structure known as `transaction log`. This structure records the reads and tentative writes that the transaction has performed. It is a plain linked list (as implemented in the GHC Runtime [see code here](https://github.com/ghc/ghc/blob/428e152be6bb0fd3867e41cee82a6d5968a11a26/rts/STM.c)) which holds references to the various operations occurring in the TVars. Diagrammatically:
+
+```
+       ----
+      | v0 | <- A friendly TVar encapsulating the value v0.
+       ----
+
+    *Some code executed here in Thread A*
+    *Some othercode executed in Thread B*
+
+    State of Memory
+       ----
+      | v0 | <- I am unchanged until the transaction commits.
+       ----
+
+TLogA <- generated for ThreadA
+
+ --
+|  | --> write v1 --> write v2 --> read v2 --> write v3
+ --      to v0        to v1                    to v2
+  |
+  |
+Original value -> v0
+
+
+TLogB <- generated for ThreadB
+
+ --
+|  | --> write vx --> read vx --> write vy
+ --      to v0                    to vy
+  |
+  |
+Original value -> v0
+
+```
 
 [1]A transaction is something which results in the execution of a smart contract.

@@ -15,7 +15,38 @@ to the problem faced by today’s fault-tolerant distributed systems, where
 legislators correspond to processes and leaving the Chamber corresponds to failing.
 The Paxons’ solution may therefore be of some interest to computer scientists.
 ``` 
-Analogies are easy to remember and if fully understood, can inspire new research ideas. However the negative consequences of an analogy is that people can misunderstand and and start applying it too broadly to the corresponding field. The key to understand is that an analogy is never a complete argument but rather an introductory remark to start a more complete discussion analyzing the merits and limits of one field in another. Keeping that in mind let us start by understanding what are smart contracts and the issues surrounding them.
+Analogies are easy to remember and if fully understood, can inspire new research ideas. However the negative consequence of an analogy is that people can misunderstand and and start applying it too broadly to the corresponding field. The key to understand is that an analogy is never a complete argument but rather an introductory remark to start a more complete discussion analyzing the merits and limits of one field in another. Keeping that in mind let us start by understanding what are smart contracts and the issues surrounding them.
 
 **SMART CONTRACTS AND THEIR ASSOCIATED PERILS**
 
+A smart contract is a program that runs in the blockchain and has its correct execution enforced by the consensus protocol. A smart contract can be thought analogous to an object in OOP terminology. It encapsulates state within itself. This state is manipulated by a set of functions which are called either directly by the clients or indirectly by another smart contracts. Smart contracts are defined using Turing complete languages like [Solidity](https://solidity.readthedocs.io/en/develop/). In this post we will be using Solidity, a static typed language, for all of our examples which will be executing on top of the [Ethereum blockchain](https://www.ethereum.org/). 
+
+The execution semantics of a transaction[1] in the Ethereum block chain should ideally exhibit *atomicity* and *consistency*. The paper by Lu, et al find at fault this very assumption. They pinpoint 4 primary problems existent in the semantics of Smat Contracts. They are:
+* Transaction-Ordering Dependence
+* Timestamp Dependence
+* Mishandled Exceptions
+* Reentrance Vulnerabilities
+
+We will briefly define each of these problem and later see how by introducing **lazy transactional semantics** to Solidity, we can atleast solve 2 of them. Read on.
+
+Have a look at this piece of code:
+
+```javascript
+contract MarketPlace{ 
+    uint public price; 
+    uint public stock; 
+    /.../
+    function updatePrice(uint _price){ 
+        if (msg.sender == owner)
+            price = _price;
+    function buy (uint quant) returns (uint){
+        if (msg.value < quant * price || quant > stock) 
+            throw;
+        stock -= quant;
+        /.../ 
+    }}
+```
+The syntax is very similar to vanilla javascript (Never thought I would have to mention javascript in my Haskell blogs :sweat: )
+
+
+[1]A transaction is something which results in the execution of a smart contract.

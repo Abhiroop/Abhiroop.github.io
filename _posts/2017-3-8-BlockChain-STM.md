@@ -145,7 +145,7 @@ Internally, whenever a block of code is executed inside an `atomically` statemen
        ----
 
     *Some code executed here in Thread A*
-    *Some othercode executed in Thread B*
+    *Some other code executed in Thread B*
 
     State of Memory
        ----
@@ -166,11 +166,82 @@ TLogB <- generated for ThreadB
 
  --
 |  | --> write vx --> read vx --> write vy
- --      to v0                    to vy
+ --      to v0                    to vx
   |
   |
 Original value -> v0
 
 ```
+
+One of the transaction finally *commits* and successfully writes to the main memory. The other transaction before writing to the main memory validates if the original reference has changed and if it has then it rolls back all the changes it has buffered till now. This implementation is *lazy* in nature because it buffers all the writes to the main memory before the transaction can finally commit. As a result of which IO actions or side effects are not allowed inside the STM Monad.
+
+**EXTENDING THE LAZY STM BEHAVIOR TO SOLIDITY**
+
+The primary analogy which fueled my thoughts in this direction, is from the paper Concurrent Perspectives on Smart Contracts:
+```
+Accounts using smart contracts in a blockchain 
+                 are like
+threads using concurrent objects in shared memory.
+```
+So a smart contract can be thought as roughly analogous to a concurrent object. So our TVar, which is a concurrent object can hold something stateful like a smart contract. So analyzing the reentrance vulnerability once again, but this time backed by this powerful analogy, let us call the caller contract as `C1` and the malicious callee contract as `C2`. Hence we have:
+
+```
+Contracts 
+  ----          ----
+ | C1 |   and  | C2 |
+  ----          ----
+represented as TVars.
+```
+Now consider the malicious function in the DAO attack:
+```javascript
+function withdrawBalance (){ 
+    if (!(msg.sender.call.value(
+        userBalances[msg.sender])())) { throw; } 
+    userBalances[msg.sender] = 0;
+}
+```
+The inherent semantics of Solidity suggests an *eager* transactional behavior. Now let us extend that behavior and add the laziness semantics that we just studied in Haskell's STM implementation. So imagine Solidity has a conctruct for `atomic{..}`. The code would look like:
+```javascript
+function withdrawBalance (){
+    atomic{                           //Imaginary
+        if (!(msg.sender.call.value(
+            userBalances[msg.sender])())) { throw; } 
+        userBalances[msg.sender] = 0;
+    }
+}
+```
+Having the *lazy* semantics, would immediately initialize a `transactional log` for the first call to `withdrawBalance`. However what happens in case of re-entrance? What we are dealing with here is a *nested transaction*. I am going to quote the paper Composable Memory Transactions here:
+```
+Nesting is handled by STMStartNested which creates a fresh log 
+for a nested transaction. While executing a nested transaction, 
+writes are recorded (only) in the nested transaction’s log, 
+while reads must consult both the nested log and the logs of its 
+enclosing transactions.
+```
+
+So now the moment the function call re-enters, a new transaction log is initialized fo every re-entrant call. 
+
+Let us do a little calculation here. Suppose the attacker's account held 100K$. And the value transferred with each of the malicious calls is 10K$. So it would take the attacker 6000 re-entrant calls to drain the DAO of 60 million dollars. The transaction log after 6000 of those calls would look like this:
+```
+Let σ denote the state of the contract
+ --
+| σ| --                                 //1st call
+ --    |
+       |
+        --
+       | σ| --                         //2nd call
+        --    |
+              |
+              ...
+                |
+                --
+               | σ|                    //6000th call where gas
+                --                       runs out
+```
+Now the catch is when we are about to *validate* the transactions. (STMIsValid function from the paper). While the original paper only uses a single invariant(check if the original refernce has changed in main memory), being in the context of smart contracts we can take our own liberty and add as many invariants that we can think of in this context. To tacke the DAO attack before zeroing out 10K$ 600 times, we can add a simple invariant:
+
+ *Deduce balance if and only if balance[sender] > 0* 
+
+ As the attacker himself has 100K$ in his account the first 10 calls will succeed but then onwards the above invariant is not satisfied. As a result the entire chain of 6000 reentrant calls fail and the entire transaction is not committed owing to its lazy behavior. The Smart Contract encapsulated inside the fictitious TVar remains unscathed.
 
 [1]A transaction is something which results in the execution of a smart contract.

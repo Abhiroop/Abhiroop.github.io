@@ -29,7 +29,7 @@ The execution semantics of a transaction[1] in the Ethereum block chain should i
 
 We will briefly define each of these problem and later see how by introducing **lazy transactional semantics** to Solidity, we can atleast solve 2 of them. Read on.
 
-* Transaction Ordering dependence
+* **Transaction Ordering dependence**
 
 Have a look at this piece of code:
 
@@ -52,11 +52,11 @@ Barring the types, the syntax is very similar to vanilla javascript (Never thoug
 
 Now the names of the functions are pretty descriptive themselves. So forget smart contracts for a moment and lets think in real life. You want to `buy` a product from Amazon at 10$. You decide to go ahead and start paying for the goods. However while you are mentioning your card details, the seller decides to call an `updatePrice` function on the product and change the price to 15$. Now when you actually paty through the payment portal you end up transferring only 10$ because that is the price that you saw, but meanwhile the amount you paid is 5$ short of the amount the product is listed for. So what happens to the state of the transaction? It lies in an insconsistent state. This fact can be used by malicious users to their benefits as defined in the paper bu Lu, et al.  Buyers may have to pay much higher than the observed price when they issue the buy requests. ANd being a decentralized system there is no uniform notion of time in the blockchain. We will talk a lot more about this vulnerability later, and how mitigitaing this is much more difficult than the other vulnerbailities. However, in the meanwhile, let us detail the other vulnerabilities.
 
-* Timestamp Dependence
+* **Timestamp Dependence**
 
 This is an age old problem. Researchers have spawned a lot of papers citing the problems caused by using timestamp for pseudo-random number generation. These problems become thousandfold when the timestamp is issued in a distributed system and that too by the participants themselves. Moreover Ethereum allows the miner to vary the value by roughly 900 seconds. The paper by Lu, et al demonstrates a similar example on a contract called `theRun`. Allowing contracts to access to the block timestamp is essentially a redundant feature that renders contracts vulnerable to manipulation by adversaries.
 
-* Mishandled Exceptions
+* **Mishandled Exceptions**
 
 In etehereum there are multiple ways for a contract to call another. One of them is calling the other contracts via the `send` instruction. If there is an exception raised in the callee contract, it terminates, reverts its state and returns False. Howvere there are cases when the exceptions tends to not get propagated to the caller contract. Research has shown, 27.9% of the contracts do not check the return values after calling other contracts via send. This can render the caller contract to an inconsistent state and we study that in the KoET(KingOfTheEtherThrone) example below.
 
@@ -74,7 +74,7 @@ In etehereum there are multiple ways for a contract to call another. One of them
 ```
 The KoET contract is very simple. The person bidding to be the King pays the current King an amount in ethers. The current king profits from the difference of the price he paid to the king before him and the price others pay to be his successor. Now if we look at line 4 and line 7 above the vulnerability becomes apparent. We are executing line 7 and dethroning the current king without checking if line 4 threw an exception. And once we crown the new king the behavior becomes irreversible. The exact reason for the exception varies from case to case but the basic gist is that the contracts do not exhibit proper defensive programming strategies while dealing with Exceptions.
 
-* Reentrance Vulnerabilities
+* **Reentrance Vulnerabilities**
 
 And finally we are here to talk about Reentrance Vulnerabilities. As long as you haven't been living under a rock for the past couple of years, you would have heard of the [DAO exploit](https://blog.ethereum.org/2016/06/17/critical-update-re-dao-vulnerability/) which happenned on 17th July, 2016 and robbed the DAO platform, hosted on top of Ethereum, of 60 million dollars! The DAO attack is a classic example of exploiting the reentrance vulnerabilities prevalent in the semantics of smart contracts. Let us take some time to study it: 
 ```javascript

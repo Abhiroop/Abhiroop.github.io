@@ -17,3 +17,5 @@ The Paxons’ solution may therefore be of some interest to computer scientists.
 ``` 
 Analogies are easy to remember and if fully understood, can inspire new research ideas. However the negative consequences of an analogy is that people can misunderstand and and start applying it too broadly to the corresponding field. The key to understand is that an analogy is never a complete argument but rather an introductory remark to start a more complete discussion analyzing the merits and limits of one field in another. Keeping that in mind let us start by understanding what are smart contracts and the issues surrounding them.
 
+**SMART CONTRACTS AND THEIR ASSOCIATED PERILS**
+

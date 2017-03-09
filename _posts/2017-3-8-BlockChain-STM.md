@@ -322,3 +322,14 @@ Whenever the issue is ordering, I try thinking of introducing the notion of *com
 
 **RUMINATIONS ON CATEGORY THEORY**
 
+Given an algebraic structure, if we are able to prove its commutative nature, it basically ensures that any operation on that structure is 'order independent'. This is a great property to have when working in a distributed system, where there is no notion of *global time*. Of recent CRDTs function by employing this property of an algebraic structure called a *bounded semilattice.*
+
+A *semilattice* is simply a commutative and idempotent semigroup. If we add an identity operation to that, what we have is a *bounded semilattice.* But aren't semigroups with identities known as Monoids? Well yes. To give a concise definition, *a bounded semilattice is an idempotent and commutative monoid*. So being a monoid we get *associativity* for free. To consider the advantages of *associativity* please consider going thorugh my previous [blog post on Finger Trees](https://abhiroop.github.io/Finger-Trees/).
+
+CRDTs have a merge function and the merge function must be commutative, associative, and idempotent. It provides a *join*(supremum of a Set) for any pair of replica states, so the set of all states forms a semilattice and we get all the properties of the same.
+
+However coming back to Smart contracts, different orders have different meanings. *So modelling it as a semi-lattice wont help us in any way*. I believe a lot of answers lie in the study of Category Theory and we would perhaps have to look in a litte bit deeper to seek a corresponding structure which can actually model time(which I am not aware if its possible in Algebra) and order. But for now let us take a look at the operational semantics as defined in the Making Smart Contracts Smarter paper to tackle this issue:
+
+**IMPROVED OPERATIONAL SEMANTICS**
+
+![an image alt text]({{ site.baseurl }}/images/transaction.png "TRANSACTION SEMANTICS")

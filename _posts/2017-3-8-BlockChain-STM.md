@@ -58,7 +58,7 @@ This is an age old problem. Researchers have spawned a lot of papers citing the 
 
 * **Mishandled Exceptions**
 
-In etehereum there are multiple ways for a contract to call another. One of them is calling the other contracts via the `send` instruction. If there is an exception raised in the callee contract, it terminates, reverts its state and returns False. However there are cases when the exceptions tends to not get propagated to the caller contract. Research has shown, 27.9% of the contracts on Ethereum do not check the return values after calling other contracts via send. This can render the caller contract to an inconsistent state and we study that in the KoET(KingOfTheEtherThrone) example below.
+In Ethereum there are multiple ways for a contract to call another. One of them is calling the other contracts via the `send` instruction. If there is an exception raised in the callee contract, it terminates, reverts its state and returns False. However there are cases when the exceptions tends to not get propagated to the caller contract. Research has shown, 27.9% of the contracts on Ethereum do not check the return values after calling other contracts via send. This can render the caller contract to an inconsistent state and we study that in the KoET(KingOfTheEtherThrone) example below.
 
 ```javascript
 1 function claimThrone(string name) {
@@ -94,7 +94,7 @@ And finally we are here to talk about Reentrance Vulnerabilities. As long as you
 13  userBalances[msg.sender] = 0;
 14}}
 ```
-In Ethereum, when a contract calls another the caller contract is stuck in an intermediate state. So if you observe Line 11, this contract actually calls another contract and only then changes the value to 0. Now imagine a case where this contract is in the middle of the call made at line 11 and in the meantime another contracts(assume another for now) calls the 'stuck state' contract. Well that reaches line 11 and again gets stuck. In a similar way imagine this cycle of 'reenter and call again' goes on till you exhaust all the gas. Well at this point finally line 13 gets executed and this entire chain of reentrance unravels zeroing out the total balance held by the contract. And that ladies and gentlemen is the DAO attack. Reentrance has been a well studied topic in Concurrency. But this is inherently sequential code? You ask what has this got to do with concurrency. As an answer I would like to quote a line from the paper by Sergey, et al
+In Ethereum, when a contract calls another the caller contract is stuck in an intermediate state. So if you observe Line 11, this contract actually calls another contract and only then changes the value to 0. Now imagine a case where this contract is in the middle of the call made at line 11 and in the meantime another contract (assume another for now) calls the 'stuck state' contract. Well that reaches line 11 and again gets stuck. In a similar way imagine this cycle of 'reenter and call again' goes on till you exhaust all the gas. Well at this point finally line 13 gets executed and this entire chain of reentrance unravels zeroing out the total balance held by the contract. And that ladies and gentlemen is the DAO attack. Reentrance has been a well studied topic in Concurrency. But this is inherently sequential code? You ask what has this got to do with concurrency. As an answer I would like to quote a line from the paper by Sergey, et al
 ```
 Previous analyses of this bug have indicated that the problem is 
 due to recursion or unintended reentrancy. In a narrow sense this 
@@ -238,7 +238,7 @@ Let σ denote the state of the contract
                | σ|                    //6000th call where gas
                 --                       runs out
 ```
-Now the catch is when we are about to *validate* the transactions. (STMIsValid function from the paper). While the original paper only uses a single invariant(check if the original refernce has changed in main memory), being in the context of smart contracts we can take our own liberty and add as many invariants that we can think of in this context. To tacke the DAO attack before zeroing out 10K$, 600 times, we can add a simple invariant:
+Now the catch is when we are about to *validate* the transactions. (`STMIsValid` function from the paper). While the original paper only uses a single invariant (check if the original reference has changed in main memory), being in the context of smart contracts we can take our own liberty and add as many invariants that we can think of in this context. To tackle the DAO attack, before zeroing out 10K$, 600 times, we can add a simple invariant:
 
  *Deduce balance if and only if balance[sender] > 0* 
 
@@ -282,7 +282,7 @@ such as gas-bounded executions and management of funds.
 
 **AN OPTIMAZTION FOR STM**
 
-While on the topic of STM, I would like to enlist a very sweet optimization that is possible to speed up the already performance heavy STM. As SImon Marlow notes in his book *Parallel and Concurrent Programming in Haskell*:
+While on the topic of STM, I would like to enlist a very sweet optimization that is possible to speed up the already performance heavy STM. As Simon Marlow notes in his book *Parallel and Concurrent Programming in Haskell*:
 ```
 It is possible that a future STM implementation may use a different 
 data structure to store the log, reducing the readTVar “overhead to 
@@ -308,7 +308,7 @@ This lazy transactional model of Smart Contracts doesn't have much to add to the
 
 The Transaction-Ordering dependence problem is a reflection of the age old problem of ordering events in Distributed Sytems. While programming on a single machine, we tend to take for granted the concept of a *uniform notion of time* for our entire system. The moment we step into Distributed Systems, our assumptions about time tends to go for a toss. The most seminal work in this field has to be, my favourite piece of literature of all time,  [Time, Clocks and the Ordering of Events in a Distributed System](http://amturing.acm.org/p558-lamport.pdf) by Leslie Lamport, where he defines Logical clocks and the concept of partial and total order in a distributed system. While working on a cryptocurrency protocol, we tried everything from, Vector Clocks to an implementation of *Cheap Paxos*. But most solutions are very slow, error prone and Paxos(the gold standard) gurantees only *safety* and not *liveness*.
 
-Ethereum on the other hand allows the miners to send their own system time stamp and has a grace period of 900 seconds, which doen't seem like great semantics to me but works well for them. Howver let us switch back to our analogy on concurrent systems and think about the original problem:
+Ethereum on the other hand allows the miners to send their own system time stamp and has a grace period of 900 seconds, which doen't seem like a great decision to me but works well for them. Howver let us switch back to our analogy on concurrent systems and think about the original problem:
 
 ```
 Actual Order          Malicious Order
@@ -328,7 +328,7 @@ A *semilattice* is simply a commutative and idempotent semigroup. If we add an i
 
 CRDTs have a merge function and the merge function must be commutative, associative, and idempotent. It provides a *join*(supremum of a Set) for any pair of replica states, so the set of all states forms a semilattice and we get all the properties of the same.
 
-However coming back to Smart contracts, different orders have different meanings. *So modelling it as a semi-lattice wont help us in any way*. I believe a lot of answers lie in the study of Category Theory and we would perhaps have to look in a litte bit deeper to seek a corresponding structure which can actually model time(which I am not aware if its possible in Algebra) and order. But for now let us take a look at the operational semantics as defined in the Making Smart Contracts Smarter paper to tackle this issue:
+However coming back to Smart contracts, different orders have different meanings. *So modelling it as a semi-lattice wont help us in any way*. I believe a lot of answers lie in the study of Category Theory and we would perhaps have to look in a litte bit deeper to seek a corresponding structure which can actually model time and order. But for now let us take a look at the operational semantics as defined in the Making Smart Contracts Smarter paper to tackle this issue:
 
 **IMPROVED OPERATIONAL SEMANTICS**
 
@@ -346,8 +346,8 @@ g : the guard condition
 ```
 For those of you who are intimidated by the overuse of Greek alphabets above, let me assure you operational semantics tend to look very intimidating but they *always* arent so. For interested people, I would suggested picking up the book *Types and Programming Languages* by Benjamin C. Pierce, which should get you started well and good.
 
-We can see above that a guard condition is defined in TX-Stale and if that is not satisfied the state σ of the smart contract remains unchanged after its execution. The guard condition is validated in TX-Success as well as TX-Exception cases. Drawing parallel with a concurrent system the semantics of this looks very similar to the `CAS instruction` available on modern multi processors.
+We can see above that a guard condition is defined in TX-Stale and if that is not satisfied the state σ of the smart contract remains unchanged after its execution. The guard condition is validated in TX-Success as well as TX-Exception cases. Drawing parallel with a concurrent system the semantics of this looks very similar to the `CAS instruction` available on modern multi processors, which actually `compares` and then `swap` in an atomic way.
 
-The principal point portrayed by the Concurrent perspectives paper, is that by drawing an analogy with Concurrent systems we get the power of formal and mechanized verification, studied for years, in concurrent setting to be translated directly to Smart Contracts. We can attempt to move in that direction by studying verification techniques for Transactional Memory.
+Having solved the individual issues we should understand that the principal point portrayed by the Concurrent perspectives paper, is that by drawing an analogy with Concurrent systems we get the power of formal and mechanized verification, studied for years, in concurrent setting to be translated directly to Smart Contracts. We can attempt to move in that direction by studying verification techniques for Transactional Memory.
 
-So in the coming post we will be surveying Hoare Logic, Separation Logic and how it improves upon Hoare Logic. An we will try to use Separation Logic to automatically verify Transactional Memory programs. I am scavenging for more resources on this. Any lead would be appreciated. Thanks and enjoy!
+So in the coming post we will be surveying Hoare Logic followed by Separation Logic. And then we will try to use Separation Logic to automatically verify Transactional Memory programs. I am scavenging for more resources on [this](http://www.lirmm.fr/~ducour/Doc-objets/ECOOP2012/ECOOP/ecoop/640.pdf). Any leads would be appreciated. Thanks and enjoy!

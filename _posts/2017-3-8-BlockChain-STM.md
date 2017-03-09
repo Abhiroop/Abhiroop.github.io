@@ -5,10 +5,10 @@ title: The Smart Contract and Transactional Memory Analogy
 
 In this post and the coming ones I will be detailing about a particularly interesting analogy between Smart Contracts and Transactional memory. And how we can use one to verify and reason about the other. The majority of this work has been driven by a [paper by Dr. Ilya Sergey and Dr. Aquinas Hobor](http://ilyasergey.net/papers/csc-wtsc17.pdf) on similar grounds. My attempt has been to try and extend the ideas from this paper, to mitigate the issues plaguing Smart contracts and their semantics as listed in another paper on [Making Smart Contracts Smarter](https://eprint.iacr.org/2016/633.pdf). Essentially this serves as a literature survey as well as a playground for me to pitch my ideas unifying the 2 papers. Sounds rad? Then read ahead. :)
 
-**THE POWER OF ANALOGY**
+**THE POWER OF ANALOGIES**
 
 Before delving into all the gory details, I will like to take some time out to talk a little about the power of analogies in Science. 
-Science itself is littered with example of analogies throughout its history. I would like to point you to a very well known example in Computer Science. The Turing Award winner Leslie Lamport, arguably the greatest computer scientist of the current generation, has spent his entire life studying distributed systems. His seminal work on consensus algorithm known as the [Paxos algorithm](http://lamport.azurewebsites.net/pubs/lamport-paxos.pdf) is based on an analogy with a "Part-time parliament" in the Greek town of Paxos. The parliament functioned despite of the peripatetic propensity of its part time legislators. Quoting from the paper:
+Science itself is littered with example of analogies throughout its history. I would like to point you to a very well known example in Computer Science. The Turing Award winner Leslie Lamport, arguably the greatest computer scientist of the current generation, has spent his entire life studying distributed systems. His seminal work on consensus algorithm known as the [Paxos algorithm](http://lamport.azurewebsites.net/pubs/lamport-paxos.pdf) is based on an analogy with a "Part-time parliament" in the Greek town of Paxos. The parliament functioned despite of the peripatetic tendencies of its part time legislators. Quoting from the paper:
 ```
 The problem of governing with a part-time parliament bears a remarkable correspondence
 to the problem faced by today’s fault-tolerant distributed systems, where
@@ -301,3 +301,24 @@ Yes! A bloom filter consumes very less space and has a very simple API - *insert
 
 
 However lets get back to the remaining vulnerabilities in Smart Contracts.
+
+This lazy transactional model of Smart Contracts doesn't have much to add to the problems posed by TimeStamp dependence. The general solution to this category of problems lies in following carefully tailored defensive programming strategies which the paper by Lu, et al state very succintly. Let us look at the more interesting problem of Transaction Ordering Dependence.
+
+**THE ISSUES WITH ORDERING EVENTS**
+
+The Transaction-Ordering dependence problem is a reflection of the age old problem of ordering events in Distributed Sytems. While programming on a single machine, we tend to take for granted the concept of a *uniform notion of time* for our entire system. The moment we step into Distributed Systems, our assumptions about time tends to go for a toss. The most seminal work in this field has to be, my favourite piece of literature of all time,  [Time, Clocks and the Ordering of Events in a Distributed System](http://amturing.acm.org/p558-lamport.pdf) by Leslie Lamport, where he defines Logical clocks and the concept of partial and total order in a distributed system. While working on a cryptocurrency protocol, we tried everything from, Vector Clocks to an implementation of *Cheap Paxos*. But most solutions are very slow, error prone and Paxos(the gold standard) gurantees only *safety* and not *liveness*.
+
+Ethereum on the other hand allows the miners to send their own system time stamp and has a grace period of 900 seconds, which doen't seem like great semantics to me but works well for them. Howver let us switch back to our analogy on concurrent systems and think about the original problem:
+
+```
+Actual Order          Malicious Order
+-----------         ------------------
+Buy                  updatePrice
+updatePrice          Buy
+```
+One thing is for certain, the lazy STM semantics are not going to be of much help to us in this case. These actions are definitely not *atomic* in nature. Well, in that case can we draw parallels with this and lock based concurrency? Does this remind anybody of the *lock order inversion problem*? Even if it does I do not think the solution for that works for us. We can't fixate on a particular order because it is very much possible that the order mentioned in the malicious order column might be the actual order and vice versa.
+
+Whenever the issue is ordering, I try thinking of introducing the notion of *commutativity* somehow. Which is basically telling that you *don't care about order*, which unfortunately doesn't work for this case again. In this case the different orders have different meanings. But just for the fun of it shall we talk a little bit about *commutativity*?
+
+**RUMINATIONS ON CATEGORY THEORY**
+

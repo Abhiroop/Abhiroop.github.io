@@ -21,7 +21,7 @@ Analogies are easy to remember and if fully understood, can inspire new research
 
 A smart contract is a program that runs in the blockchain and has its correct execution enforced by the consensus protocol. A smart contract can be thought analogous to an object in OOP terminology. It encapsulates state within itself. This state is manipulated by a set of functions which are called either directly by the clients or indirectly by another smart contracts. Smart contracts are defined using Turing complete languages like [Solidity](https://solidity.readthedocs.io/en/develop/). In this post we will be using Solidity, a static typed language, for all of our examples which will be executing on top of the [Ethereum blockchain](https://www.ethereum.org/). 
 
-The execution semantics of a transaction[1] in the Ethereum block chain should ideally exhibit *atomicity* and *consistency*. The paper by Lu, et al finds at fault this very assumption. They pinpoint 4 primary problems existent in the semantics of Smat Contracts. They are:
+The execution semantics of a transaction (A transaction is something which results in the execution of a smart contract.) in the Ethereum block chain should ideally exhibit *atomicity* and *consistency*. The paper by Lu, et al finds at fault this very assumption. They pinpoint 4 primary problems existent in the semantics of Smat Contracts. They are:
 * Transaction-Ordering Dependence
 * Timestamp Dependence
 * Mishandled Exceptions
@@ -70,7 +70,7 @@ In etehereum there are multiple ways for a contract to call another. One of them
 7     currentMonarch = Monarch(
 8         msg.sender, name,
 9         valuePaid , block.timestamp);
-10 }}
+10 }
 ```
 The KoET contract is very simple. The person bidding to be the King pays the current King an amount in ethers. The current king profits from the difference of the price he paid to the king before him and the price others pay to be his successor. Now if we look at line 4 and line 7 above the vulnerability becomes apparent. We are executing line 7 and dethroning the current king without checking if line 4 threw an exception. And once we crown the new king the behavior becomes irreversible. The exact reason for the exception varies from case to case but the basic gist is that the contracts do not exhibit proper defensive programming strategies while dealing with Exceptions.
 
@@ -238,10 +238,66 @@ Let σ denote the state of the contract
                | σ|                    //6000th call where gas
                 --                       runs out
 ```
-Now the catch is when we are about to *validate* the transactions. (STMIsValid function from the paper). While the original paper only uses a single invariant(check if the original refernce has changed in main memory), being in the context of smart contracts we can take our own liberty and add as many invariants that we can think of in this context. To tacke the DAO attack before zeroing out 10K$ 600 times, we can add a simple invariant:
+Now the catch is when we are about to *validate* the transactions. (STMIsValid function from the paper). While the original paper only uses a single invariant(check if the original refernce has changed in main memory), being in the context of smart contracts we can take our own liberty and add as many invariants that we can think of in this context. To tacke the DAO attack before zeroing out 10K$, 600 times, we can add a simple invariant:
 
  *Deduce balance if and only if balance[sender] > 0* 
 
- As the attacker himself has 100K$ in his account the first 10 calls will succeed but then onwards the above invariant is not satisfied. As a result the entire chain of 6000 reentrant calls fail and the entire transaction is not committed owing to its lazy behavior. The Smart Contract encapsulated inside the fictitious TVar remains unscathed.
+ As the attacker himself has 100K$ in his account the first 10 calls will succeed and start zeroing out the balance of the sender. But then onwards the above invariant is not satisfied. As a result the entire chain of 6000 reentrant calls fail and the entire transaction is not committed owing to its lazy behavior. The Smart Contract encapsulated inside the fictitious TVar remains unscathed thanks to laziness.
 
-[1]A transaction is something which results in the execution of a smart contract.
+* Dealing with mishandled exception
+
+Extending this idea to deal with mishandled exceptions the King of Ether Throne code becomes:
+
+```javascript
+function claimThrone(string name) {
+    /.../
+    atomic {       //Imaginary
+        if (currentMonarch.ethAddr != wizardAddress) 
+            currentMonarch.ethAddr.send(compensation); 
+        /.../
+        // assign the new king
+        currentMonarch = Monarch(
+            msg.sender, name,
+            valuePaid , block.timestamp);
+    }
+ }
+```
+So now it becomes less painful from the part of the programmer to add defensive checks in his smart contracts program because while validating the transaction we can introduce a new invariant
+
+*Success if and only if any send call does not return 0 (i.e throws exception)*
+
+As soon as this invariant is not satisfied the transaction aborts and owing to the lazy behavior neither the King loses his throne or the contracts dispatches its money.
+
+* Disadvantages of lazy STM
+
+The most visible disadvantage of this approach is the runtime has to undertake the overhead of maintaining a separate data structure for buffering. The performance will be slower because in most of the case writes might be unncessarily buffered. And as Dr. Sergey notes in his paper too:
+```
+As any analogy, ours should not be taken verbatim: on the one 
+hand, there are indeed issues in concurrency, which seem to be 
+hardly observable in contract programming; on the other hand, 
+smart contract implementers should also be careful about notions 
+that do not have direct counterparts in the concurrency realm, 
+such as gas-bounded executions and management of funds.
+```
+
+**AN OPTIMAZTION FOR STM**
+
+While on the topic of STM, I would like to enlist a very sweet optimization that is possible to speed up the already performance heavy STM. As SImon Marlow notes in his book *Parallel and Concurrent Programming in Haskell*:
+```
+It is possible that a future STM implementation may use a different 
+data structure to store the log, reducing the readTVar “overhead to 
+O(log n) or better (on average), but the likelihood that a long 
+transaction will fail to commit would still be an issue.
+
+```
+
+While studying the Transaction Log we deduced that for any read operation to happen in an ongoing transaction, it should read through all the writes spread across the entire length of the linked list. However lets think about it, for instance a TVar `T` exists which hasn't been touched across the whole transaction but only its value is read. Unnecessarily the entire linked list is scanned to answer a simple query: *Is T a member of this linked list?* And the answer is No. Can we think about any data structure  which answers 
+
+*non existence of a membership in a set very fast and consuming less space?*
+      
+**BLOOM FILTERS!**
+
+Yes! A bloom filter consumes very less space and has a very simple API - *insert* and *membership*. It is a probabilistic data structure which can answer non existence queries with 99% gurantee and at `O(1)` speed. However for the existence query we still have to pay for `O(n)`. You can find my simple implementation of Bloom Filters [here](https://github.com/Abhiroop/HaskAl/blob/master/BloomFilter.hs)(Blog post detailing its structure coming soon!).
+
+
+However lets get back to the remaining vulnerabilities in Smart Contracts.

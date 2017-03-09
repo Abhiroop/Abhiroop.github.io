@@ -3,7 +3,7 @@ layout: post
 title: The Smart Contract and Transactional Memory Analogy
 ---
 
-In this post and the coming ones I will be detailing about a particularly interesting analogy between Smart Contracts and Transactional memory. And how we can use one to verify and reason about the other. The majority of this work has been driven by a [paper by Dr. Ilya Sergey and Dr. Aquinas Hobor](http://ilyasergey.net/papers/csc-wtsc17.pdf) on similar grounds. My attempt has been to try and extend the ideas from this paper, to mitigate the issues plaguing Smart contracts and their semantics as listed in another paper on [Making Smart Contracts Smarter](https://eprint.iacr.org/2016/633.pdf). Essentially this serves as a literature survey as well as a playground for me to pitch my ideas unifying the 2 papers. Sounds rad? Then read ahead. :)
+In this post and the coming ones I will be detailing about a particularly interesting analogy between Smart Contracts and Transactional memory. And how we can use one to verify and reason about the other. The majority of this work has been driven by a [paper by Dr. Ilya Sergey and Dr. Aquinas Hobor](http://ilyasergey.net/papers/csc-wtsc17.pdf) on similar grounds. My attempt has been to try and extend the ideas from this paper, to mitigate the issues plaguing Smart contracts and their semantics as listed in another paper on [Making Smart Contracts Smarter](https://eprint.iacr.org/2016/633.pdf). Essentially this serves as a literature survey as well as a playground for me to pitch my ideas unifying the 2 papers. Sounds interesting? Then read ahead. :)
 
 **THE POWER OF ANALOGIES**
 
@@ -333,3 +333,21 @@ However coming back to Smart contracts, different orders have different meanings
 **IMPROVED OPERATIONAL SEMANTICS**
 
 ![an image alt text]({{ site.baseurl }}/images/transaction.png "TRANSACTION SEMANTICS")
+The definition of each value in the semantics are given below:
+```
+M : the contract code array
+0 etc : the address of the next instruction to be executed
+l : an auxiliary memory (e.g. for inputs , outputs)
+s : an operand stack
+g : the guard condition
+σ : state of the contract
+Ɛ : an empty call stack;
+<e>exc : an exception has been thrown;
+```
+For those of you who are intimidated by the overuse of Greek alphabets above, let me assure you operational semantics tend to look very intimidating but they *always* arent so. For interested people, I would suggested picking up the book *Types and Programming Languages* by Benjamin C. Pierce, which should get you started well and good.
+
+We can see above that a guard condition is defined in TX-Stale and if that is not satisfied the state σ of the smart contract remains unchanged after its execution. The guard condition is validated in TX-Success as well as TX-Exception cases. Drawing parallel with a concurrent system the semantics of this looks very similar to the `CAS instruction` available on modern multi processors.
+
+The principal point portrayed by the Concurrent perspectives paper, is that by drawing an analogy with Concurrent systems we get the power of formal and mechanized verification, studied for years, in concurrent setting to be translated directly to Smart Contracts. We can attempt to move in that direction by studying verification techniques for Transactional Memory.
+
+So in the coming post we will be surveying Hoare Logic, Separation Logic and how it improves upon Hoare Logic. An we will try to use Separation Logic to automatically verify Transactional Memory programs. I am scavenging for more resources on this. Any lead would be appreciated. Thanks and enjoy!

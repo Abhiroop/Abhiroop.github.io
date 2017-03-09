@@ -21,7 +21,7 @@ Analogies are easy to remember and if fully understood, can inspire new research
 
 A smart contract is a program that runs in the blockchain and has its correct execution enforced by the consensus protocol. A smart contract can be thought analogous to an object in OOP terminology. It encapsulates state within itself. This state is manipulated by a set of functions which are called either directly by the clients or indirectly by other smart contracts. Smart contracts are defined using Turing complete languages like [Solidity](https://solidity.readthedocs.io/en/develop/). In this post we will be using Solidity, a static typed language, for all of our examples which will be executing on top of the [Ethereum blockchain](https://www.ethereum.org/). 
 
-The execution semantics of a transaction (A transaction is something which results in the execution of a smart contract.) in the Ethereum block chain should ideally exhibit *atomicity* and *consistency*. The paper by Lu, et al finds at fault this very assumption. They pinpoint 4 primary problems existent in the semantics of Smart Contracts. They are:
+The execution semantics of a transaction (something which results in the execution of a smart contract) in the Ethereum block chain should ideally exhibit *atomicity* and *consistency*. The paper by Lu, et al finds at fault this very assumption. They pinpoint 4 primary problems existent in the semantics of Smart Contracts. They are:
 * Transaction-Ordering Dependence
 * Timestamp Dependence
 * Mishandled Exceptions
@@ -54,7 +54,7 @@ Now the names of the functions are pretty descriptive themselves. So forget smar
 
 * **Timestamp Dependence**
 
-This is an age old problem. Researchers have spawned a lot of papers citing the problems caused by using timestamp for pseudo-random number generation. These problems become thousandfold when the timestamp is issued in a distributed system and that too by the participants themselves. Moreover Ethereum allows the miner to vary the value by roughly 900 seconds. The paper by Lu, et al demonstrates a similar example on a contract called `theRun`. Allowing contracts to access the block timestamp is essentially a redundant feature that renders contracts vulnerable to manipulation by adversaries.
+This is an age old problem. Researchers have spawned a lot of papers citing the problems caused by using timestamp for pseudo-random number generation. These problems become tenfold when the timestamp is issued in a distributed system and that too by the participants themselves. Moreover Ethereum allows the miner to vary the value by roughly 900 seconds. The paper by Lu, et al demonstrates a similar example on a contract called `theRun`. Allowing contracts to access the block timestamp is essentially a redundant feature that renders contracts vulnerable to manipulation by adversaries.
 
 * **Mishandled Exceptions**
 
@@ -94,7 +94,7 @@ And finally we are here to talk about Reentrance Vulnerabilities. As long as you
 13  userBalances[msg.sender] = 0;
 14}}
 ```
-In Ethereum, when a contract calls another the caller contract is stuck in an intermediate state. So if you observe Line 11, this contract actually calls another contract and only then changes the value to 0. Now imagine a case where this contract is in the middle of the call made at line 11 and in the meantime another contract (assume another for now) calls the 'stuck state' contract. Well that reaches line 11 and again gets stuck. In a similar way imagine this cycle of 'reenter and call again' goes on till you exhaust all the gas. Well at this point finally line 13 gets executed and this entire chain of reentrance unravels zeroing out the total balance held by the contract. And that ladies and gentlemen is the DAO attack. Reentrance has been a well studied topic in Concurrency. But this is inherently sequential code? You ask what has this got to do with concurrency. As an answer I would like to quote a line from the paper by Sergey, et al
+In Ethereum, when a contract calls another, the caller contract is stuck in an intermediate state. So if you observe Line 11, this contract actually calls another contract and only then changes the value to 0. Now imagine a case where this contract is in the middle of the call made at line 11 and in the meantime another contract (assume another for now) calls the 'stuck state' contract. Well that reaches line 11 and again gets stuck. In a similar way imagine this cycle of 'reenter and call again' goes on till you exhaust all the gas. Well at this point finally line 13 gets executed and this entire chain of reentrance unravels zeroing out the total balance held by the contract. And that ladies and gentlemen is the DAO attack. Reentrance has been a well studied topic in Concurrency. But this is inherently sequential code? You ask what has this got to do with concurrency. As an answer I would like to quote a line from the paper by Sergey, et al
 ```
 Previous analyses of this bug have indicated that the problem is 
 due to recursion or unintended reentrancy. In a narrow sense this 
@@ -102,7 +102,7 @@ is true, but in a wider sense what is going on is that sequential
 code is running in what is in many senses a concurrent environment.
 ```
 
-While this paper draws an analogy between smart contracts and traditional lock based concurrency, it also notes that the locking contract pattern has a significant non-modular design. Also lock based concurrency mechanisms are traditionally not *composable*. As a result of which we will look at an alternative to lock based concurrency which is known as Transactional Memory.
+While this paper draws an analogy between smart contracts and traditional lock based concurrency, it also notes that the *locking contract pattern* has a significant non-modular design. Also lock based concurrency mechanisms are traditionally not *composable*. As a result of which we will look at an alternative to lock based concurrency which is known as Transactional Memory.
 
 **TRANSACTIONAL MEMORY**
 
@@ -122,7 +122,7 @@ readTVar  :: TVar a -> STM a
 writeTVar :: TVar a -> a -> STM ()
 ``` 
 
-The `STM` you see here in the type signature is a Monad instance. Its APIs are also fairly intuitive
+The `STM` you see here in the type signature is a Monad instance. Its APIs are also fairly intuitive:
 ```haskell
 data STM a
 instance Monad STM
@@ -173,7 +173,7 @@ Original value -> v0
 
 ```
 
-One of the transaction finally *commits* and successfully writes to the main memory. The other transaction before writing to the main memory validates if the original reference has changed and if it has then it rolls back all the changes it has buffered till now. This implementation is *lazy* in nature because it buffers all the writes to the main memory before the transaction can finally commit. As a result of which IO actions or side effects are not allowed inside the STM Monad.
+One of the transaction finally *commits* and successfully writes to the main memory. The other transaction before writing to the main memory validates if the original reference has changed and if it has, then it rolls back all the changes it has buffered till now and retries. **This implementation is *lazy* in nature because it buffers all the writes to the main memory before the transaction can finally commit.** As a result of which IO actions or side effects are not allowed inside the STM Monad.
 
 **EXTENDING THE LAZY STM BEHAVIOR TO SOLIDITY**
 
@@ -200,7 +200,7 @@ function withdrawBalance (){
     userBalances[msg.sender] = 0;
 }
 ```
-The inherent semantics of Solidity suggests an *eager* transactional behavior. Now let us extend that behavior and add the laziness semantics that we just studied in Haskell's STM implementation. So imagine Solidity has a construct for `atomic{..}`. The code would look like:
+The inherent semantics of Solidity suggests an *eager* transactional behavior. Now let us extend that and add the lazy behavior that we just studied in Haskell's STM implementation. So imagine Solidity has a construct for `atomic{..}`. The code would look like:
 ```javascript
 function withdrawBalance (){
     atomic{                           //Imaginary
@@ -238,7 +238,7 @@ Let σ denote the state of the contract
                | σ|                    //6000th call where gas
                 --                       runs out
 ```
-Now the catch is when we are about to *validate* the transactions. (`STMIsValid` function from the paper). While the original paper only uses a single invariant (check if the original reference has changed in main memory), being in the context of smart contracts we can take our own liberty and add as many invariants that we can think of in this context. To tackle the DAO attack, before zeroing out 10K$, 600 times, we can add a simple invariant:
+Now the catch is when we are about to *validate* the transactions. (`STMIsValid` function from the paper). While the original paper only uses a single invariant (check if the original reference has changed in main memory), **being in the context of smart contracts we can take our own liberty to introduce as many invariants that we can think of in this context.** To tackle the DAO attack, before zeroing out 10K$, 600 times, we can add a simple invariant:
 
  *Deduce balance if and only if balance[sender] > 0* 
 
@@ -262,11 +262,11 @@ function claimThrone(string name) {
     }
  }
 ```
-So now it becomes less painful from the part of the programmer to add defensive checks in his smart contracts program because while validating the transaction we can introduce a new invariant
+So now it becomes less painful from the part of the programmer to add defensive checks in his smart contract program because while validating the transaction we can introduce a new invariant
 
 *Success if and only if any send call does not return 0 (i.e throws exception)*
 
-As soon as this invariant is not satisfied the transaction aborts and owing to the lazy behavior neither the King loses his throne or the contracts dispatches its money.
+As soon as this invariant is not satisfied, the transaction aborts and owing to the lazy behavior neither the King loses his throne nor the contract dispatches its money.
 
 * Disadvantages of lazy STM
 
@@ -285,19 +285,19 @@ such as gas-bounded executions and management of funds.
 While on the topic of STM, I would like to enlist a very sweet optimization that is possible to speed up the already performance heavy STM. As Simon Marlow notes in his book *Parallel and Concurrent Programming in Haskell*:
 ```
 It is possible that a future STM implementation may use a different 
-data structure to store the log, reducing the readTVar “overhead to 
+data structure to store the log, reducing the readTVar overhead to 
 O(log n) or better (on average), but the likelihood that a long 
 transaction will fail to commit would still be an issue.
 
 ```
 
-While studying the Transaction Log we deduced that for any read operation to happen in an ongoing transaction, it should read through all the writes spread across the entire length of the linked list. However lets think about it, for instance a TVar `T` exists which hasn't been touched across the whole transaction but only its value is read. Unnecessarily the entire linked list is scanned to answer a simple query: *Is T a member of this linked list?* And the answer is No. Can we think about any data structure  which answers 
+While studying the Transaction Log we deduced that for any read operation to happen in an ongoing transaction, it should read through all the writes spread across the entire length of the linked list. However, let's think about it, for instance a TVar `T` exists which hasn't been *written to* across the whole transaction but only its value is read. Unnecessarily the entire linked list is scanned to answer a simple query: *Is T a member of this linked list?* And the answer is No. Can we think about any data structure  which answers 
 
 *non existence of a membership in a set very fast and consuming less space?*
       
 **BLOOM FILTERS!**
 
-Yes! A bloom filter consumes very less space and has a very simple API - *insert* and *membership*. It is a probabilistic data structure which can answer non existence queries with 99% affirmatively and at `O(1)` speed. However for the existence query we still have to pay for `O(n)`. You can find my simple implementation of Bloom Filters [here](https://github.com/Abhiroop/HaskAl/blob/master/BloomFilter.hs)(Blog post detailing its structure coming soon!).
+Yes! A bloom filter consumes very less space and has a very simple API - *insert* and *membership*. It is a probabilistic data structure which can answer *non existence* queries with ~ 99% affirmation and at `O(1)` speed. However the chances of *false positives* are relatively high and we still have to pay `O(n)` that. You can find my simple Haskell implementation of Bloom Filters [here](https://github.com/Abhiroop/HaskAl/blob/master/BloomFilter.hs) (Blog post detailing it's construction coming soon!).
 
 
 However lets get back to the remaining vulnerabilities in Smart Contracts.
@@ -306,7 +306,7 @@ This lazy transactional model of Smart Contracts doesn't have much to add to the
 
 **THE ISSUES WITH ORDERING EVENTS**
 
-The Transaction-Ordering dependence problem is a reflection of the age old problem of ordering events in Distributed Systems. While programming on a single machine, we tend to take for granted the concept of a *uniform notion of time* for our entire system. The moment we step into Distributed Systems, our assumptions about time tends to go for a toss. The most seminal work in this field has to be, my favorite piece of literature of all time,  [Time, Clocks and the Ordering of Events in a Distributed System](http://amturing.acm.org/p558-lamport.pdf) by Leslie Lamport, where he defines Logical clocks and the concept of partial and total order in a distributed system. While working on a cryptocurrency protocol, we tried everything from, Vector Clocks to an implementation of *Cheap Paxos*. But most solutions are very slow, error prone and Paxos(the gold standard) guarantees only *safety* and not *liveness*.
+The Transaction-Ordering dependence problem is a reflection of the age old problem of ordering events in Distributed Systems. While programming on a single machine, we tend to take for granted the concept of a *uniform notion of time* for our entire system. The moment we step into Distributed Systems, our assumptions about time tends to go for a toss. The most seminal work in this field has to be, my favorite piece of literature of all time,  [Time, Clocks and the Ordering of Events in a Distributed System](http://amturing.acm.org/p558-lamport.pdf) by Leslie Lamport, where he defines Logical clocks and the concept of partial and total order in a distributed system. While working on a cryptocurrency protocol, we tried everything from, Vector Clocks to an implementation of *Cheap Paxos*. But most solutions are very slow, error prone and Paxos(the gold standard) guarantees only *safety*. (Paxos is not guaranteed to be *live* – it may not terminate in some rare cases.)
 
 Ethereum on the other hand allows the miners to send their own system time stamp and has a grace period of 900 seconds, which doesn't seem like a great decision to me but works well for them. However let us switch back to our analogy on concurrent systems and think about the original problem:
 
@@ -346,7 +346,7 @@ g : the guard condition
 ```
 For those of you who are intimidated by the overuse of Greek alphabets above, let me assure you operational semantics tend to look very intimidating but they *always* aren't so. For interested people, I would suggested picking up the book *Types and Programming Languages* by Benjamin C. Pierce, which should get you started well and good.
 
-We can see above that a guard condition is defined in TX-Stale and if that is not satisfied the state σ of the smart contract remains unchanged after its execution. The guard condition is validated in TX-Success as well as TX-Exception cases. Drawing parallel with a concurrent system the semantics of this looks very similar to the `CAS instruction` available on modern multi processors, which actually `compares` and then `swap` in an atomic way.
+We can see above that a guard condition is defined in TX-Stale and if that is not satisfied the state σ of the smart contract remains unchanged after its execution. The guard condition is validated in TX-Success as well as TX-Exception cases. Drawing parallel with a concurrent system, the semantics of this looks very similar to the `CAS instruction` available on modern multi processors, which actually `compares` and then `swap` in an atomic way. Although this solution works well for this specific case, there is no general solution currently existent for solving the Transaction-Ordering dependence.
 
 Having solved the individual issues we should understand that the principal point portrayed by the Concurrent perspectives paper, is that by drawing an analogy with Concurrent systems we get the power of formal and mechanized verification, studied for years, in concurrent setting to be translated directly to Smart Contracts. We can attempt to move in that direction by studying verification techniques for Transactional Memory.
 

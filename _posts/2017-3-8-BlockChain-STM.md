@@ -318,7 +318,7 @@ updatePrice          Buy
 ```
 One thing is for certain, the lazy STM semantics are not going to be of much help to us in this case. These actions are definitely not *atomic* in nature. Well, in that case can we draw parallels with this and lock based concurrency? Does this remind anybody of the *lock order inversion problem*? Even if it does I do not think the solution for that works for us. We can't fixate on a particular order because it is very much possible that the order mentioned in the malicious order column might be the actual order and vice versa.
 
-Whenever the issue is ordering, I try thinking of introducing the notion of *commutativity* somehow. Which is basically telling that you *don't care about order*, which unfortunately doesn't work for this case again. In this case the different orders have different meanings. But just for the fun of it shall we talk a little bit about *commutativity*?
+Whenever the issue is ordering, I try thinking of introducing the notion of *commutativity* somehow. Which is basically telling that you *don't care about order*, which unfortunately doesn't work for this case again. In this case the different orders have different meanings. But just for the fun of it shall we talk a little bit about *commutativity*? I promise to keep it small!
 
 **RUMINATIONS ON CATEGORY THEORY**
 

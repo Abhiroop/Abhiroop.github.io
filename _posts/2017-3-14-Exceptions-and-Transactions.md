@@ -22,4 +22,12 @@ So let us start by looking at the simplified version of a reentrant bug, as ment
 13    userBalances[msg.sender] = 0;
 14 }}
 ```
-The code above clearly demonstrates a coding anti pattern in line 11 and 13 where the sender is sent the amount in line 11 and his balance is zeroed out later,whereas clearly we should have coded it the other way around. However, please do note this is not the DAO contract. This is a much simpler contract and had the DAO contract been written this way, *the sent amount would have been reverted, if the `call.value` ran into an exception*. I will expand upon my previous statement now.
+The code above clearly demonstrates a coding anti pattern in line 11 and 13 where the receiver is sent the amount in line 11 and his balance is zeroed out later, whereas clearly we should have coded it the other way around. However, please do note this is not the DAO contract. This is a much simpler contract and had the DAO contract been written this way, *the sent amount would have been reverted, if the `call.value` ran into an exception*. I will expand upon my previous statement in a bit.
+
+One of my principal sources of confusion was the rollback mechanism of the EVM and whether rolling back would result in reverting the balance to the sender. And is sending money equivalent to a *side effect*? 
+
+Well, an expression or a function is a side effect if it modifies some state outside its *scope* or has an observable interaction with the outside world. In this case if we take a look at the operational semantics of the EVM in the [Ethereum yellowpaper](http://gavwood.com/paper.pdf):
+
+![an image alt text]({{ site.baseurl }}/images/semantic.png "EVM SEMANTICS")
+
+We can answer that by thinking, when does a rollback actually happen? Well, a rollback takes place 

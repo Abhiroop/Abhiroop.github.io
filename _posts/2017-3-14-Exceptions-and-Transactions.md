@@ -90,4 +90,6 @@ So, having done this experiment, if we return to look at the code, I mentioned a
 5 }}
 ```
 
-If this was indeed the DAO contract, the moment an `out of gas exception` would occur, `throw` would be called and the entire transaction would be reverted to its old state. Also it is a bad idea to use `call.value` in place of `send`. Because `send`
+If this was indeed the DAO contract, the moment an exception would occur, `throw` would be called and the entire transaction would be reverted to its old state. Also it is a bad idea to use `call.value` in place of `send`. Because `send` by default doesn't forward any gas to the receiver. However `call.value` does that and would allow the receiver to make reentrant calls without burning any gas for the message call in between. Please note, if I had not manually checked for the `send` to return a `false` no exception would occur and the balance would end up getting transferred despite of running out of gas. We can conduct an experiment on the same by deploying the Token contract using the `CoinTransfer` event as mentioned in the `geth` docs.
+
+For those interested to study the DAO contract in detail it cane be found over here: [The original DAO contract](https://github.com/slockit/DAO/blob/DAO11/DAO.sol#L738) 

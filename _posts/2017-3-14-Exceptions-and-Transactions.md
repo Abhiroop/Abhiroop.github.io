@@ -22,7 +22,7 @@ So let us start by looking at the simplified version of a reentrant bug, as ment
 13    userBalances[msg.sender] = 0;
 14 }}
 ```
-The code above clearly demonstrates a coding anti pattern in line 11 and 13 where the receiver is sent the amount in line 11 and his balance is zeroed out later, whereas clearly we should have coded it the other way around. However, please do note this is not the DAO contract. This is a much simpler contract and had the DAO contract been written this way, *the sent amount would have been reverted, if the `call.value` ran into an exception*. I will expand upon my previous statement in a bit.
+The code above clearly demonstrates a coding anti pattern in line 11 and 13 where the receiver is sent the amount in line 11 and his balance is zeroed out later, whereas clearly we should have coded it the other way around. However, please do note this is not the DAO contract. This is a much simpler contract and had the DAO contract been written this way, *the sent amount would have been reverted, if the `call.value` ran into an exception*. I will expand upon this statement in a bit.
 
 One of my principal sources of confusion was the rollback mechanism of the EVM and whether rolling back would result in reverting the balance to the sender. And is sending money equivalent to a *side effect*? 
 
@@ -30,11 +30,15 @@ Well, an expression or a function is a side effect if it modifies some state out
 
 ![an image alt text]({{ site.baseurl }}/images/semantic.png "EVM SEMANTICS")
 
-As we can see above, whenever an exception occurs the *world state* σ should be reverted to the point prior to intermediate state σ'. Now the question is what is σ? And does it capture the balance transfer within its scope? Well of course. According to the yellowpaper, σ is used to denote the *World State*, which is a mapping between addresses and account states. Implementation of the paper, models this mapping as a `Merkle Patricia Trie`. And being an immutable structure it allows any previous state (whose root hash is known) to be recalled by simply altering the root hash accordingly. 
+As we can see above, whenever an exception occurs the *world state* σ should be reverted to the point prior to intermediate state σ'. Now the question is what is σ? And does it capture the balance transfer within its scope? Well of course. According to the yellowpaper, σ is used to denote the *World State*, which is a mapping between addresses and account states. Implementations of the paper, models this mapping as a `Merkle Patricia Trie`. And being an immutable structure it allows any previous state (whose root hash is known) to be recalled by simply altering the root hash accordingly. 
 
-So rolling back would simply involve altering the root hash of the Merkle Patricia trie. Hence if an Account A own 50$ and Account B owns 100$. And while attempting to send 5$ from Account A to Account B an exception the root hash of the trie would be reverted to the one where A and B owns 50$ and 100$ respectively. Interested readers can look at the model of the State, in the C++ implementation of Ethereum [here](https://github.com/ethereum/cpp-ethereum/blob/6f0c62e759fe9c950dbd481c1514f869bdd70a93/libethereum/State.h).
+So rolling back would simply involve altering the root hash of the Merkle Patricia trie. Hence if an Account A owns 50$ and Account B owns 100$. And while attempting to send 5$ from Account A to Account B an exception is thrown, the root hash of the trie would be reverted to the one where A and B owns 50$ and 100$ respectively. Interested readers can look at the model of the State, in the C++ implementation of Ethereum [here](https://github.com/ethereum/cpp-ethereum/blob/6f0c62e759fe9c950dbd481c1514f869bdd70a93/libethereum/State.h).
 
 Now, let us confirm the same fact from the [documentation of Solidity](http://solidity.readthedocs.io/en/latest/control-structures.html#exceptions), which states:
 ```
-The effect of an exception is that the currently executing call is stopped and reverted (i.e. all changes to the state and balances are undone) and the exception is also “bubbled up” through Solidity function calls (exceptions are send and the low-level functions call, delegatecall and callcode, those return false in case of an exception).
+The effect of an exception is that the currently executing call 
+is stopped and reverted (i.e. all changes to the state and balances 
+are undone) and the exception is also “bubbled up” through Solidity 
+function calls (exceptions are send and the low-level functions call, 
+delegatecall and callcode, those return false in case of an exception).
 ```

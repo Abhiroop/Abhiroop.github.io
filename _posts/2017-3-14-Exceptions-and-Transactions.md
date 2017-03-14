@@ -30,4 +30,11 @@ Well, an expression or a function is a side effect if it modifies some state out
 
 ![an image alt text]({{ site.baseurl }}/images/semantic.png "EVM SEMANTICS")
 
-We can answer that by thinking, when does a rollback actually happen? Well, a rollback takes place 
+As we can see above, whenever an exception occurs the *world state* σ should be reverted to the point prior to intermediate state σ'. Now the question is what is σ? And does it capture the balance transfer within its scope? Well of course. According to the yellowpaper, σ is used to denote the *World State*, which is a mapping between addresses and account states. Implementation of the paper, models this mapping as a `Merkle Patricia Trie`. And being an immutable structure it allows any previous state (whose root hash is known) to be recalled by simply altering the root hash accordingly. 
+
+So rolling back would simply involve altering the root hash of the Merkle Patricia trie. Hence if an Account A own 50$ and Account B owns 100$. And while attempting to send 5$ from Account A to Account B an exception the root hash of the trie would be reverted to the one where A and B owns 50$ and 100$ respectively. Interested readers can look at the model of the State, in the C++ implementation of Ethereum [here](https://github.com/ethereum/cpp-ethereum/blob/6f0c62e759fe9c950dbd481c1514f869bdd70a93/libethereum/State.h).
+
+Now, let us confirm the same fact from the [documentation of Solidity](http://solidity.readthedocs.io/en/latest/control-structures.html#exceptions), which states:
+```
+The effect of an exception is that the currently executing call is stopped and reverted (i.e. all changes to the state and balances are undone) and the exception is also “bubbled up” through Solidity function calls (exceptions are send and the low-level functions call, delegatecall and callcode, those return false in case of an exception).
+```

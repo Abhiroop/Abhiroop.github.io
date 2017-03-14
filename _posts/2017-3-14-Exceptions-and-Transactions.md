@@ -42,3 +42,24 @@ are undone) and the exception is also “bubbled up” through Solidity
 function calls (exceptions are send and the low-level functions call, 
 delegatecall and callcode, those return false in case of an exception).
 ```
+ The above is pretty self explanatory. Let us verify the above with a Contract of our own. There is a lot of documentation out there about setting up an ethereum client and running a full node or a test node. I preferred to use `geth` for my experiments. Also for simplification of the process of deploying your contracts and playing around with them, you can use [testrpc](https://github.com/ethereumjs/testrpc). Testrpc comes with 10 test accounts. For deployment and contract development in general I would suggest people to use the [Truffle framework](http://truffleframework.com/) which does the compilation, linking, deployment and binary management. Also for contract programmers from India, Kraken and Coinbase does not trade ethers in India currently. You can purchase ethers from [Ethex India](https://ethexindia.com/). I will be using a very simple token contract as mentioned in the examples of `geth`:
+
+ ```javascript
+pragma solidity ^0.4.9;
+contract token { 
+    mapping (address => uint) public coinBalanceOf;
+    event CoinTransfer(address sender, address receiver, uint amount);
+
+  function token(uint supply) {
+        coinBalanceOf[msg.sender] = supply;
+    }
+    
+  function sendCoin(address receiver, uint amount) returns(bool sufficient) {
+        if (coinBalanceOf[msg.sender] < amount) return false;
+        coinBalanceOf[msg.sender] -= amount;
+        coinBalanceOf[receiver] += amount;
+        CoinTransfer(msg.sender, receiver, amount);
+        return true;
+    }
+}
+ ```

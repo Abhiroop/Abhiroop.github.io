@@ -42,24 +42,52 @@ are undone) and the exception is also “bubbled up” through Solidity
 function calls (exceptions are send and the low-level functions call, 
 delegatecall and callcode, those return false in case of an exception).
 ```
- The above is pretty self explanatory. Let us verify the above with a Contract of our own. There is a lot of documentation out there about setting up an ethereum client and running a full node or a test node. I preferred to use `geth` for my experiments. Also for simplification of the process of deploying your contracts and playing around with them, you can use [testrpc](https://github.com/ethereumjs/testrpc). Testrpc comes with 10 test accounts. For deployment and contract development in general I would suggest people to use the [Truffle framework](http://truffleframework.com/) which does the compilation, linking, deployment and binary management. Also for contract programmers from India, Kraken and Coinbase does not trade ethers in India currently. You can purchase ethers from [Ethex India](https://ethexindia.com/). I will be using a very simple token contract as mentioned in the examples of `geth`:
+ The above is pretty self explanatory. Let us verify the above with a Contract of our own. There is a lot of documentation out there about setting up an ethereum client and running a full node or a test node. I preferred to use `geth` for my experiments. Also for simplification of the process of deploying your contracts and playing around with them, you can use [testrpc](https://github.com/ethereumjs/testrpc). Testrpc comes with 10 test accounts. For deployment and contract development in general I would suggest people to use the [Truffle framework](http://truffleframework.com/) which does the compilation, linking, deployment and binary management. Also for contract programmers from India, Kraken and Coinbase does not trade ethers in India currently. You can purchase ethers from [Ethex India](https://ethexindia.com/). I will be using a very simple token contract as mentioned in the examples of `geth` with slight modifications:
 
  ```javascript
 pragma solidity ^0.4.9;
 contract token { 
     mapping (address => uint) public coinBalanceOf;
-    event CoinTransfer(address sender, address receiver, uint amount);
+    
 
+  /* Initializes contract with initial supply tokens to the creator of the contract */
   function token(uint supply) {
         coinBalanceOf[msg.sender] = supply;
     }
-    
-  function sendCoin(address receiver, uint amount) returns(bool sufficient) {
+
+  /* Very simple trade function */
+    function sendCoin(address receiver, uint amount) returns(bool sufficient) {
         if (coinBalanceOf[msg.sender] < amount) return false;
         coinBalanceOf[msg.sender] -= amount;
         coinBalanceOf[receiver] += amount;
-        CoinTransfer(msg.sender, receiver, amount);
+        if (!receiver.send(amount))
+            throw;
         return true;
     }
 }
  ```
+
+ The `geth` tutorial covers everything about setting up your account. The modification which I have made is removing the event `CoinTransfer` and instead sending the coin using `send` and actually checking if an exception is thrown, in that case I explicitly `throw`. This is an additional statement to be executed before deploying the contract:
+ ```
+ personal.unlockAccount(web3.eth.accounts[0], "<Your password here>")
+ ```
+Upon compiling the contract, the solc online compiler will give you the gas estimates. In this case:
+```
+Creation: 20341 + 122600
+External:
+  coinBalanceOf(address): 353
+  sendCoin(address,uint256): unknown
+```
+
+So let us load our account with less gas so that the `sendCoin` can fail and an exception be thrown. With the basic initialization in place and following the documentation, when we call the `sendCoin` function, we encounter an exception. If we were to inspect the state of `eth.accounts[1]`(the receiver) it still wouldn't have any token and the entire supply would reside with `eth.accounts[0]`(the sender), which implies a proper rollback takes place. Please do not if you o ahead with this, the gas will end up being consumed.
+
+So, having done this experiment, if we return to look at the code, I mentioned at the beginning of my post, the vulnerable function looks like this:
+```javascript
+1 function withdrawBalance (){ 
+2    if (!(msg.sender.call.value(
+3          userBalances[msg.sender])())) { throw; } 
+4    userBalances[msg.sender] = 0;
+5 }}
+```
+
+If this was indeed the DAO contract, the moment an `out of gas exception` would occur, `throw` would be called and the entire transaction would be reverted to its old state. Also it is a bad idea to use `call.value` in place of `send`. Because `send`

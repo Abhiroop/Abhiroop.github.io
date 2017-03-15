@@ -2,7 +2,7 @@
 layout: post
 title: Understanding the Transactional Nature of Smart Contracts during message calls
 ---
-In this post I attempt to summarize my understandings about the transactional nature of Smart contract execution while attempting message calls. I conducted this study, while trying to understand the DAO exploit. The basis of the DAO exploit is a recursive(or rather reentrant) message call. One important point to note that an exception(during a message call or otherwise) in the Ethereum Virtual Machine , would imply reverting all changes to **state and balance**. So, the attacker has to be careful not to hit any exception while attempting the reentrant call. I also rectify certain mistaken assumptions, I made in my previous post.
+In this post I attempt to summarize my understandings about the transactional nature of Smart contract execution while attempting message calls. I conducted this study, while trying to understand the DAO exploit. The basis of the DAO exploit is a recursive(or rather reentrant) message call. One important point to note that an exception(during a message call or otherwise) in the Ethereum Virtual Machine , would imply reverting all changes to **state and balance**. Solidity has a documentation on [cases](http://solidity.readthedocs.io/en/latest/control-structures.html#exceptions) where exceptions are thrown automatically. However in certain cases like `send` we need to manually raise an exception using `throw`. So, the attacker has to be careful not to hit any exceptions while attempting the reentrant call to avoid reverting. I also rectify certain mistaken assumptions, I made in my previous post.
 
 So let us start by looking at the simplified version of a reentrant bug, as mentioned in multiple blogs and the paper Making Smart Contracts Smarter.
 
@@ -30,7 +30,7 @@ Well, an expression or a function is a side effect if it modifies some state out
 
 ![an image alt text]({{ site.baseurl }}/images/semantic.png "EVM SEMANTICS")
 
-As we can see above, whenever an exception occurs the *world state* σ should be reverted to the point prior to intermediate state σ'. Now the question is what is σ? And does it capture the balance transfer within its scope? Well of course. According to the yellowpaper, σ is used to denote the *World State*, which is a mapping between addresses and account states. Implementations of the paper, models this mapping as a `Merkle Patricia Trie`. And being an immutable structure it allows any previous state (whose root hash is known) to be recalled by simply altering the root hash accordingly. 
+As we can see above, whenever an exception occurs the *world state* σ should be reverted to the point prior to intermediate state σ'. Now the question is what is σ? And does it capture the account balance within its scope? Well of course. According to the yellowpaper, σ is used to denote the *World State*, which is a mapping between addresses and account states. Implementations of the paper, models this mapping as a `Merkle Patricia Trie`. And being an immutable structure it allows any previous state (whose root hash is known) to be recalled by simply altering the root hash accordingly. 
 
 So rolling back would simply involve altering the root hash of the Merkle Patricia trie. Hence if an Account A owns 50$ and Account B owns 100$. And while attempting to send 5$ from Account A to Account B an exception is thrown, the root hash of the trie would be reverted to the one where A and B owns 50$ and 100$ respectively. Interested readers can look at the model of the State, in the C++ implementation of Ethereum [here](https://github.com/ethereum/cpp-ethereum/blob/6f0c62e759fe9c950dbd481c1514f869bdd70a93/libethereum/State.h).
 
@@ -67,7 +67,7 @@ contract token {
 }
  ```
 
- The `geth` tutorial covers everything about setting up your account. The modification which I have made is removing the event `CoinTransfer` and instead sending the coin using `send` and actually checking if an exception is thrown, in that case I explicitly `throw`. This is an additional statement to be executed before deploying the contract:
+ The `geth` tutorial covers everything about setting up your account. The modification which I have made is removing the event `CoinTransfer` and instead sending the coin using `send` and actually checking if an exception occurs during the `send`, in that case I explicitly `throw`. This is an additional statement to be executed before deploying the contract:
  ```
  personal.unlockAccount(web3.eth.accounts[0], "<Your password here>")
  ```
@@ -79,7 +79,7 @@ External:
   sendCoin(address,uint256): unknown
 ```
 
-So let us load our account with less gas so that the `sendCoin` can fail and an exception be thrown. With the basic initialization in place and following the documentation, when we call the `sendCoin` function, we encounter an exception. If we were to inspect the state of `eth.accounts[1]`(the receiver) it still wouldn't have any token and the entire supply would reside with `eth.accounts[0]`(the sender), which implies a proper rollback takes place. Please do not if you o ahead with this, the gas will end up being consumed.
+So let us load our account with less gas so that the `sendCoin` can fail and an exception be thrown. With the basic initialization in place and following the documentation, when we call the `sendCoin` function, we encounter an exception. If we were to inspect the state of `eth.accounts[1]`(the receiver) it still wouldn't have any token and the entire supply would reside with `eth.accounts[0]`(the sender), which implies a proper rollback takes place. Please do note that if you go ahead with this, the gas will end up being consumed.
 
 So, having done this experiment, if we return to look at the code, I mentioned at the beginning of my post, the vulnerable function looks like this:
 ```javascript
@@ -90,6 +90,9 @@ So, having done this experiment, if we return to look at the code, I mentioned a
 5 }}
 ```
 
-If this was indeed the DAO contract, the moment an exception would occur, `throw` would be called and the entire transaction would be reverted to its old state. Also it is a bad idea to use `call.value` in place of `send`. Because `send` by default doesn't forward any gas to the receiver. However `call.value` does that and would allow the receiver to make reentrant calls without burning any gas for the message call in between. Please note, if I had not manually checked for the `send` to return a `false` no exception would occur and the balance would end up getting transferred despite of running out of gas. We can conduct an experiment on the same by deploying the Token contract using the `CoinTransfer` event as mentioned in the `geth` docs.
+If this was indeed the DAO contract, the moment `call.value` would return `false`, `throw` would be called which raises an exception and the entire transaction would be reverted to its old state. Also it is a bad idea to use `call.value` in place of `send`. Because `send` by default doesn't forward any gas to the receiver. However `call.value` does that and would allow the receiver to make reentrant calls without burning any gas for the message call in between. Please note, if I had not manually checked for the `send` to return a `false` no exception would occur and the balance would end up getting transferred despite of running out of gas. We can conduct an experiment on the same by deploying the Token contract using the `CoinTransfer` event as mentioned in the `geth` docs. The key takeaway for a contract developer is this:
 
-For those interested to study the DAO contract in detail it cane be found over here: [The original DAO contract](https://github.com/slockit/DAO/blob/DAO11/DAO.sol#L738) 
+1. The concept of rollback is tied to an exception. Exception results in rollback.
+2. The `send` function of Solidity returns `false` on facing an exception. You have to manually check and use a `throw` statement to trigger the rollback.
+
+For those interested to study the DAO contract in detail it cane be found over here: [The original DAO contract](https://github.com/slockit/DAO/blob/DAO11/DAO.sol#L738). Phil Daian and Peter Vessenes have done a very good job of explaining the DAO attack line by line 

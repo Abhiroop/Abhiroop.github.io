@@ -257,12 +257,13 @@ We have finally arrived at the State file, which is the facade for operating on 
 std::vector<detail::Change> m_changeLog;
 ```
 It is similar to the `Transaction Log` structure that I mentioned in my previous blog post. Any atomic change to any account is registered and appended in the changelog. In case some changes must be reverted, the changes are popped from the changelog and undone. The `kinds` of `changes` are pretty self explanatory.
-`Balance` signifies change in Account balance.
-`Storage` signifies Account storage modification.
-`Nonce` signifies Nonce being increased by 1.
-`Create` signifies Account creation.
-`NewCode` signifies new code being added to an account and
-`Touch` signifies touching an account for the first time.
+
+* `Balance` signifies change in Account balance.
+* `Storage` signifies Account storage modification.
+* `Nonce` signifies Nonce being increased by 1.
+* `Create` signifies Account creation.
+* `NewCode` signifies new code being added to an account
+* `Touch` signifies touching an account for the first time.
 
 All these are logged as atomic state change entries. [C++ note to self: `auto&` means working with mutable original items]
 

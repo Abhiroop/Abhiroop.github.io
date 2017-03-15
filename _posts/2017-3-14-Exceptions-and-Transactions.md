@@ -122,7 +122,7 @@ Transfer(msg.sender, 0, balances[msg.sender]);
 [Note: The following sections might not be of much utility if you are looking for advice on writing contracts. They principally document my excursions into the EVM codebase and might contain some incorrect or incomplete information, as I have just started researching and understanding the Ethereum codebase.]
 
 We have inferred from Part 1 of this blog post that the `throw` statement in Solidity is a very useful construct for triggering rollbacks. So in all those scenarios where exceptions are not raised automatically, we can use `throw` to conveniently rollback. So what exactly happens when you `throw` in Solidity?
-We can find it [here](https://github.com/ethereum/solidity/blob/c8ec79548b8f8825735ee96f1768e7fc5313d19e/libsolidity/codegen/ContractCompiler.cpp#L762)
+We can find it in the [Contract Compiler](https://github.com/ethereum/solidity/blob/c8ec79548b8f8825735ee96f1768e7fc5313d19e/libsolidity/codegen/ContractCompiler.cpp#L762)
 ```c++
 bool ContractCompiler::visit(Throw const& _throw)
 {

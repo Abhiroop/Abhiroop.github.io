@@ -92,7 +92,7 @@ So, having done this experiment, if we return to look at the code, I mentioned a
 
 If this was indeed the DAO contract, the moment `call.value` would return `false`, `throw` would be called which raises an exception and the entire transaction would be reverted to its old state. Also it is a bad idea to use `call.value` in place of `send`. Because `send` by default doesn't forward any gas to the receiver. However `call.value` does that and would allow the receiver to make reentrant calls without burning any gas for the message call in between. Please note, if I had not manually checked for the `send` to return a `false` no exception would occur and the balance would end up getting transferred despite of running out of gas. We can conduct an experiment on the same by deploying the Token contract using the `CoinTransfer` event as mentioned in the `geth` docs. The key takeaway for a contract developer is this:
 
-1. **The concept of rollback is tied to an exception. Exceptions results in rollback.**
+1. **The concept of rollback is tied to an exception. Exceptions result in rollback.**
 2. **The `send` function of Solidity returns `false` on facing an exception. You have to manually check and use a `throw` statement to trigger the rollback.**
 
 For those interested to study the DAO contract in detail it can be found over here: [The original DAO contract](https://github.com/slockit/DAO/blob/DAO11/DAO.sol#L738). Phil Daian and Peter Vessenes have done a very good job of explaining the DAO attack line by line in their respective blogs. I would urge the interested reader to head there to understand the DAO exploit in depth, which deserves a separate post on its own. The only thing I would like to point out is the most vulnerable part in that contract:
@@ -120,3 +120,29 @@ Transfer(msg.sender, 0, balances[msg.sender]);
 **PART 2 : INTERNALS OF THE ROLLBACK MECHANISM**
 
 [Note: The following sections might not be of much utility if you are looking for advice on writing contracts. They principally document my excursion into the EVM codebase and might contain some incorrect or incomplete information, as I have just started researching and understanding the Ethereum codebase.]
+
+We have inferred from Part 1 of this blog post that the `throw` statement in Solidity is a very useful construct for triggering rollbacks. So in all those scenarios where exceptions are not raised automatically, we can use `throw` to conveniently rollback. So what exactly happens when you `throw` in Solidity?
+We can find it [here](https://github.com/ethereum/solidity/blob/c8ec79548b8f8825735ee96f1768e7fc5313d19e/libsolidity/codegen/ContractCompiler.cpp#L762)
+```c++
+bool ContractCompiler::visit(Throw const& _throw)
+{
+	CompilerContext::LocationSetter locationSetter(m_context, _throw);
+	// Do not send back an error detail.
+	m_context << u256(0) << u256(0);
+	m_context << Instruction::REVERT;
+	return false;
+}
+```
+So what exactly is this REVERT instruction? Lets look at the [Instruction file](https://github.com/ethereum/solidity/blob/0d8a9c328910bc9a0ab18beb273c029dc9a05b15/libevmasm/Instruction.h)
+```c++
+/// Virtual machine bytecode instruction.
+enum class Instruction: uint8_t
+{
+    \..\
+    REVERT = 0xfd,		///< halt execution, revert state and return output data
+	INVALID = 0xfe,		///< invalid instruction for expressing runtime errors (e.g., division-by-zero)
+	SELFDESTRUCT = 0xff	///< halt execution and register account for later deletion
+};
+```
+So we find something interesting here, `REVERT` corresponds to `0xfd` in the EVM bytecode but also next to it we find an instruction called `INVALID` which signals runtime errors like division by zero. Together `0xfd` and `0xfe` corresponds to handling Runtime exception in the EVM. Together these 2 constitute the bread and butter of the rollback mechanism in EVM. So let us open the Ethereum yellow paper and find these corresponding instructions in the instruction set:
+![an image alt text]({{ site.baseurl }}/images/instruction.png "Instructions")

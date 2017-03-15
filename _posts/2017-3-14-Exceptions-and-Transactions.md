@@ -265,6 +265,6 @@ It is similar to the `Transaction Log` structure that I mentioned in my previous
 * `NewCode` signifies new code being added to an account
 * `Touch` signifies touching an account for the first time.
 
-All these are logged as atomic state change entries. [C++ note to self: `auto&` means working with mutable original items]
+All these are logged as atomic state change entries. [C++ note to self: `auto&` means when you want to work with original items and may modify them.]
 
 Through this exercise we could understand the rollback mechanism of the EVM. For future work I will be looking more deeply into the Ethereum yellowpaper and try and understand the various other workflows inside the EVM.

@@ -1,8 +1,8 @@
 ---
 layout: post
-title: Understanding the Transactional Nature of Smart Contracts during message calls
+title: Understanding the Transactional Nature of Smart Contracts
 ---
-In this post I attempt to summarize my understandings about the transactional nature of Smart contract execution while attempting message calls. I conducted this study, while trying to understand the DAO exploit. The basis of the DAO exploit is a recursive(or rather reentrant) message call. One important point to note that an exception(during a message call or otherwise) in the Ethereum Virtual Machine , would imply reverting all changes to **state and balance**. Solidity has a documentation on [cases](http://solidity.readthedocs.io/en/latest/control-structures.html#exceptions) where exceptions are thrown automatically. However in certain cases like `send` we need to manually raise an exception using `throw`. So, the attacker has to be careful not to hit any exceptions while attempting the reentrant call to avoid reverting. I also rectify certain mistaken assumptions, I made in my previous post.
+In this post I attempt to summarize my understandings about the transactional nature of Smart contract execution. I conducted this study, while trying to understand the DAO exploit. The basis of the DAO exploit is a recursive(or rather reentrant) message call. One important point to note that an exception(during a message call or otherwise) in the Ethereum Virtual Machine , would imply reverting all changes to **state and balance**. Solidity has a documentation on [cases](http://solidity.readthedocs.io/en/latest/control-structures.html#exceptions) where exceptions are thrown automatically. However in certain cases like `send` we need to manually raise an exception using `throw`. So, the attacker has to be careful not to hit any exceptions while attempting the reentrant call to avoid reverting. I also rectify certain mistaken assumptions, I made in my previous post.
 
 So let us start by looking at the simplified version of a reentrant bug, as mentioned in multiple blogs and the paper Making Smart Contracts Smarter.
 

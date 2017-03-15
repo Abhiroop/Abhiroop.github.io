@@ -32,7 +32,7 @@ Well, an expression or a function is a side effect if it modifies some state out
 
 As we can see above, whenever an exception occurs the *world state* σ should be reverted to the point prior to intermediate state σ'. Now the question is what is σ? And does it capture the account balance within its scope? Well of course. According to the yellowpaper, σ is used to denote the *World State*, which is a mapping between addresses and account states. Implementations of the paper, models this mapping as a `Merkle Patricia Trie`. And being an immutable structure it allows any previous state (whose root hash is known) to be recalled by simply altering the root hash accordingly. 
 
-So rolling back would simply involve altering the root hash of the Merkle Patricia trie. Hence if an Account A owns 50$ and Account B owns 100$. And while attempting to send 5$ from Account A to Account B an exception is thrown, the root hash of the trie would be reverted to the one where A and B owns 50$ and 100$ respectively. Interested readers can look at the model of the State, in the C++ implementation of Ethereum [here](https://github.com/ethereum/cpp-ethereum/blob/6f0c62e759fe9c950dbd481c1514f869bdd70a93/libethereum/State.h).
+So rolling back would simply involve altering the root hash of the Merkle Patricia trie. Hence if an Account A owns 50$ and Account B owns 100$. And while attempting to send 5$ from Account A to Account B an exception is thrown(manually using `throw`), the root hash of the trie would be reverted to the one where A and B owns 50$ and 100$ respectively. Interested readers can look at the model of the State, in the C++ implementation of Ethereum [here](https://github.com/ethereum/cpp-ethereum/blob/6f0c62e759fe9c950dbd481c1514f869bdd70a93/libethereum/State.h).
 
 Now, let us confirm the same fact from the [documentation of Solidity](http://solidity.readthedocs.io/en/latest/control-structures.html#exceptions), which states:
 ```
@@ -92,10 +92,10 @@ So, having done this experiment, if we return to look at the code, I mentioned a
 
 If this was indeed the DAO contract, the moment `call.value` would return `false`, `throw` would be called which raises an exception and the entire transaction would be reverted to its old state. Also it is a bad idea to use `call.value` in place of `send`. Because `send` by default doesn't forward any gas to the receiver. However `call.value` does that and would allow the receiver to make reentrant calls without burning any gas for the message call in between. Please note, if I had not manually checked for the `send` to return a `false` no exception would occur and the balance would end up getting transferred despite of running out of gas. We can conduct an experiment on the same by deploying the Token contract using the `CoinTransfer` event as mentioned in the `geth` docs. The key takeaway for a contract developer is this:
 
-1. The concept of rollback is tied to an exception. Exceptions results in rollback.
-2. The `send` function of Solidity returns `false` on facing an exception. You have to manually check and use a `throw` statement to trigger the rollback.
+1. **The concept of rollback is tied to an exception. Exceptions results in rollback.**
+2. **The `send` function of Solidity returns `false` on facing an exception. You have to manually check and use a `throw` statement to trigger the rollback.**
 
-For those interested to study the DAO contract in detail it cane be found over here: [The original DAO contract](https://github.com/slockit/DAO/blob/DAO11/DAO.sol#L738). Phil Daian and Peter Vessenes have done a very good job of explaining the DAO attack line by line in their respective blogs. I would urge the interested reader to head there to understand the DAO exploit in depth, which deserves a separate post on its own. The only thing I would like to point out is the most vulnerable part in that contract:
+For those interested to study the DAO contract in detail it can be found over here: [The original DAO contract](https://github.com/slockit/DAO/blob/DAO11/DAO.sol#L738). Phil Daian and Peter Vessenes have done a very good job of explaining the DAO attack line by line in their respective blogs. I would urge the interested reader to head there to understand the DAO exploit in depth, which deserves a separate post on its own. The only thing I would like to point out is the most vulnerable part in that contract:
 ```javascript
 1 // Burn DAO Tokens
 2 Transfer(msg.sender, 0, balances[msg.sender]);
@@ -114,6 +114,9 @@ instead of
 Transfer(msg.sender, 0, balances[msg.sender]);
 ```
 
-**INTERNALS OF THE ROLLBACK MECHANISM**
+---------
+---------
+
+**PART 2 : INTERNALS OF THE ROLLBACK MECHANISM**
 
 [Note: The following sections might not be of much utility if you are looking for advice on writing contracts. They principally document my excursion into the EVM codebase and might contain some incorrect or incomplete information, as I have just started researching and understanding the Ethereum codebase.]

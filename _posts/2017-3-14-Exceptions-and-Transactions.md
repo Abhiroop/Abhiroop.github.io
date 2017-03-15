@@ -117,7 +117,7 @@ Transfer(msg.sender, 0, balances[msg.sender]);
 ---------
 ---------
 
-**PART 2 : INTERNALS OF THE ROLLBACK MECHANISM**
+# PART 2 : INTERNALS OF THE ROLLBACK MECHANISM
 
 [Note: The following sections might not be of much utility if you are looking for advice on writing contracts. They principally document my excursion into the EVM codebase and might contain some incorrect or incomplete information, as I have just started researching and understanding the Ethereum codebase.]
 
@@ -133,7 +133,7 @@ bool ContractCompiler::visit(Throw const& _throw)
 	return false;
 }
 ```
-So what exactly is this REVERT instruction? Lets look at the [Instruction file](https://github.com/ethereum/solidity/blob/0d8a9c328910bc9a0ab18beb273c029dc9a05b15/libevmasm/Instruction.h)
+So what exactly is this REVERT instruction? Lets look at the [Instruction source](https://github.com/ethereum/solidity/blob/0d8a9c328910bc9a0ab18beb273c029dc9a05b15/libevmasm/Instruction.h)
 ```c++
 /// Virtual machine bytecode instruction.
 enum class Instruction: uint8_t

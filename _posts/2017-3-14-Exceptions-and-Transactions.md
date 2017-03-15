@@ -115,3 +115,4 @@ Transfer(msg.sender, 0, balances[msg.sender]);
 ```
 
 **INTERNALS OF THE ROLLBACK MECHANISM**
+[Note: The following sections might not be of much utility if you are looking for advice on writing contracts. They principally document my excursion into the EVM codebase and might contain some incorrect or incomplete information, as I have just started researching and understanding the Ethereum codebase.]

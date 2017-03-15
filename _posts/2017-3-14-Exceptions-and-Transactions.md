@@ -92,7 +92,26 @@ So, having done this experiment, if we return to look at the code, I mentioned a
 
 If this was indeed the DAO contract, the moment `call.value` would return `false`, `throw` would be called which raises an exception and the entire transaction would be reverted to its old state. Also it is a bad idea to use `call.value` in place of `send`. Because `send` by default doesn't forward any gas to the receiver. However `call.value` does that and would allow the receiver to make reentrant calls without burning any gas for the message call in between. Please note, if I had not manually checked for the `send` to return a `false` no exception would occur and the balance would end up getting transferred despite of running out of gas. We can conduct an experiment on the same by deploying the Token contract using the `CoinTransfer` event as mentioned in the `geth` docs. The key takeaway for a contract developer is this:
 
-1. The concept of rollback is tied to an exception. Exception results in rollback.
+1. The concept of rollback is tied to an exception. Exceptions results in rollback.
 2. The `send` function of Solidity returns `false` on facing an exception. You have to manually check and use a `throw` statement to trigger the rollback.
 
-For those interested to study the DAO contract in detail it cane be found over here: [The original DAO contract](https://github.com/slockit/DAO/blob/DAO11/DAO.sol#L738). Phil Daian and Peter Vessenes have done a very good job of explaining the DAO attack line by line 
+For those interested to study the DAO contract in detail it cane be found over here: [The original DAO contract](https://github.com/slockit/DAO/blob/DAO11/DAO.sol#L738). Phil Daian and Peter Vessenes have done a very good job of explaining the DAO attack line by line in their respective blogs. I would urge the interested reader to head there to understand the DAO exploit in depth, which deserves a separate post on its own. The only thing I would like to point out is the most vulnerable part in that contract:
+```javascript
+1 // Burn DAO Tokens
+2 Transfer(msg.sender, 0, balances[msg.sender]);
+3 withdrawRewardFor(msg.sender); // be nice, and get his rewards
+4 totalSupply -= balances[msg.sender];
+5 balances[msg.sender] = 0;
+6 paidOut[msg.sender] = 0;
+7 return true;
+```
+Of course the anti-pattern of 'sending the amount first and zeroing out later' is visible in line 3 onwards. Another critical bug as pointed by Peter Vessenes is in line 2, where the `Transfer` function is called instead of `transfer`(Note the capitalization). The `transfer` function would reduce the user balance before the vulnerable withdraw, hence the call should have looked more like 
+```javascript
+if (!transfer(0 , balances[msg.sender])) { throw; } 
+
+instead of
+
+Transfer(msg.sender, 0, balances[msg.sender]);
+```
+
+**INTERNALS OF THE ROLLBACK MECHANISM**

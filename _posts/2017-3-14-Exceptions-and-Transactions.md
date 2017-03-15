@@ -133,7 +133,7 @@ bool ContractCompiler::visit(Throw const& _throw)
 	return false;
 }
 ```
-So what exactly is this REVERT instruction? Lets look at the [Instruction source](https://github.com/ethereum/solidity/blob/0d8a9c328910bc9a0ab18beb273c029dc9a05b15/libevmasm/Instruction.h)
+So what exactly is this `Instruction::REVERT`? Lets look at the [Instruction source](https://github.com/ethereum/solidity/blob/0d8a9c328910bc9a0ab18beb273c029dc9a05b15/libevmasm/Instruction.h)
 ```c++
 /// Virtual machine bytecode instruction.
 enum class Instruction: uint8_t
@@ -145,4 +145,123 @@ enum class Instruction: uint8_t
 };
 ```
 So we find something interesting here, `REVERT` corresponds to `0xfd` in the EVM bytecode but also next to it we find an instruction called `INVALID` which signals runtime errors like division by zero. Together `0xfd` and `0xfe` corresponds to handling Runtime exception in the EVM. Together these 2 constitute the bread and butter of the rollback mechanism in EVM. So let us open the Ethereum yellow paper and find these corresponding instructions in the instruction set:
+
 ![an image alt text]({{ site.baseurl }}/images/instruction.png "Instructions")
+
+Well this is awkward! The EVM instruction set does not specify `0xfd` and `0xfe`. So we can have a general intuition that EVM would tend to rollback in case it encounters an instruction which is not defined in its Instruction Set. Let us verify that. I tried verifying this in both the [ethereumj](https://github.com/ethereum/ethereumj) - the Java implementation of the EVM as well as [cpp-ethereum](https://github.com/ethereum/cpp-ethereum) - the C++ implementation of the EVM. Lets start.
+
+**ETHEREUMJ**
+
+[Note: Feel free to skip to the section on cpp-ethereum because I was not successful in tracing the entire rollback flow in ethereumj :( ]
+
+Looking at the [Opcode source file](https://github.com/ethereum/ethereumj/blob/ec87dc558394c20091166952cd7350b8a493b3ce/ethereumj-core/src/main/java/org/ethereum/vm/OpCode.java) in Java, sure enough we cannot find any definition of the `0xfe` or `0xfd` instruction. Now if we look at the source code of the [VM](https://github.com/ethereum/ethereumj/blob/55ca8d4f7250d656e2202bf3f637264516947bb3/ethereumj-core/src/main/java/org/ethereum/vm/VM.java#L130) we find this:
+```java
+try {
+        BlockchainConfig blockchainConfig = program.getBlockchainConfig();
+
+        OpCode op = OpCode.code(program.getCurrentOp());
+        if (op == null) {
+            throw Program.Exception.invalidOpCode(program.getCurrentOp());
+        }
+        \..\
+    } catch (RuntimeException e) {
+        logger.warn("VM halted: [{}]", e);
+        program.spendAllGas();
+        program.resetFutureRefund();
+        program.stop();
+        throw e;
+    } finally {
+        program.fullTrace();
+    }
+``` 
+We see that on encountering an invalid opcode, it throws a runtime exception(To study all the exceptions look [here](https://github.com/ethereum/ethereumj/blob/ec87dc558394c20091166952cd7350b8a493b3ce/ethereumj-core/src/main/java/org/ethereum/vm/program/Program.java#L1180)). However on encountering that exception its spends all the gas, resets all future refunds and then finally builds the full trace and throws the exception. Now I am very sure someone who is `catch`ing this final `throw e` is most probably doing the rollback. But I wasn't able to trace back the entire flow. I am still working on it. I had better luck with the `C++` implementation below.
+
+**CPP-ETHEREUM**
+
+Similarly like Java we cannot find the `0xfe` and `0xfd` instruction defined in the C++ [instruction source](https://github.com/ethereum/cpp-ethereum/blob/8c805094c98740d228eef028d6ce83bef1dafb48/libevmcore/Instruction.h). So let us see what the code does when it encounters this invalid opcode:
+```c++
+void VM::interpretCases()
+{
+	INIT_CASES
+	DO_CASES
+	{	
+        \...\
+        DEFAULT
+			throwBadInstruction();
+	}	
+	WHILE_CASES
+}
+```
+It calls `throwBadInstruction()`. This function wraps it in `boost::exception` and throws a runtime exception which is caught here:
+
+```c++
+catch (VMException const& _e)
+		{
+			clog(StateSafeExceptions) << "Safe VM Exception. " << diagnostic_information(_e);
+			m_gas = 0;
+			m_excepted = toTransactionException(_e);
+			revert();
+		}
+```
+It sets the gas to 0 and calls `revert()`. The `revert()` looks interesting:
+```c++
+void Executive::revert()
+{
+	if (m_ext)
+		m_ext->sub.clear();
+
+	// Set result address to the null one.
+	m_newAddress = {};
+	m_s.rollback(m_savepoint);
+}
+```
+We have finally hit gold. The `revert()` function is rolling back the mutable state to a previous save point. Lets look inside:
+```c++
+void State::rollback(size_t _savepoint)
+{
+	while (_savepoint != m_changeLog.size())
+	{
+		auto& change = m_changeLog.back();
+		auto& account = m_cache[change.address];
+
+		// Public State API cannot be used here because it will add another
+		// change log entry.
+		switch (change.kind)
+		{
+		case Change::Storage:
+			account.setStorage(change.key, change.value);
+			break;
+		case Change::Balance:
+			account.addBalance(0 - change.value);
+			break;
+		case Change::Nonce:
+			account.setNonce(account.nonce() - 1);
+			break;
+		case Change::Create:
+			m_cache.erase(change.address);
+			break;
+		case Change::NewCode:
+			account.resetCode();
+			break;
+		case Change::Touch:
+			account.untouch();
+			m_unchangedCacheEntries.emplace_back(change.address);
+			break;
+		}
+		m_changeLog.pop_back();
+	}
+}
+```
+We have finally arrived at the State file, which is the facade for operating on the Merkle Patricia Trie. A point of interest is the `m_changeLog` here  which looks like this
+```c++
+std::vector<detail::Change> m_changeLog;
+```
+It is similar to the `Transaction Log` structure that I mentioned in my previous blog post. Any atomic change to any account is registered and appended in the changelog. In case some changes must be reverted, the changes are popped from the changelog and undone. The `kinds` of `changes` are pretty self explanatory.
+`Balance` signifies change in Account balance.
+`Storage` signifies Account storage modification.
+`Nonce` signifies Nonce being increased by 1.
+`Create` signifies Account creation.
+`NewCode` signifies new code being added to an account and
+`Touch` signifies touching an account for the first time.
+
+All these are logged as atomic state change entries. [C++ note to self: `auto&` means working with mutable original items]

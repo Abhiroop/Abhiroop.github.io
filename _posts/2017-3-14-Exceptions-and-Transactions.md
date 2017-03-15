@@ -90,7 +90,7 @@ So, having done this experiment, if we return to look at the code, I mentioned a
 5 }}
 ```
 
-If this was indeed the DAO contract, the moment `call.value` would return `false`, `throw` would be called which raises an exception and the entire transaction would be reverted to its old state. Also it is a bad idea to use `call.value` in place of `send`. Because `send` by default doesn't forward any gas to the receiver. However `call.value` does that and would allow the receiver to make reentrant calls without burning any gas for the message call in between. Please note, if I had not manually checked for the `send` to return a `false` no exception would occur and the balance would end up getting transferred despite of running out of gas. We can conduct an experiment on the same by deploying the Token contract using the `CoinTransfer` event as mentioned in the `geth` docs. The key takeaway for a contract developer is this:
+If this was indeed the DAO contract, the moment `call.value` would return `false`, `throw` would be called which raises an exception and the entire transaction would be reverted to its old state. Also it is a bad idea to use `call.value` in place of `send`. Because `send`, by default, doesn't forward any gas to the receiver. However `call.value` does that and would allow the receiver to make reentrant calls without burning any gas for the message call in between. Please note, if I had not manually checked for the `send` to return a `false`, no exception would occur and the balance would end up getting transferred, despite of running out of gas. We can conduct an experiment on the same by deploying the Token contract using the `CoinTransfer` event as mentioned in the `geth` docs. The key takeaway for a contract developer is this:
 
 1. **The concept of rollback is tied to an exception. Exceptions result in rollback.**
 2. **The `send` function of Solidity returns `false` on facing an exception. You have to manually check and use a `throw` statement to trigger the rollback.**
@@ -119,7 +119,7 @@ Transfer(msg.sender, 0, balances[msg.sender]);
 
 # PART 2 : INTERNALS OF THE ROLLBACK MECHANISM
 
-[Note: The following sections might not be of much utility if you are looking for advice on writing contracts. They principally document my excursion into the EVM codebase and might contain some incorrect or incomplete information, as I have just started researching and understanding the Ethereum codebase.]
+[Note: The following sections might not be of much utility if you are looking for advice on writing contracts. They principally document my excursions into the EVM codebase and might contain some incorrect or incomplete information, as I have just started researching and understanding the Ethereum codebase.]
 
 We have inferred from Part 1 of this blog post that the `throw` statement in Solidity is a very useful construct for triggering rollbacks. So in all those scenarios where exceptions are not raised automatically, we can use `throw` to conveniently rollback. So what exactly happens when you `throw` in Solidity?
 We can find it [here](https://github.com/ethereum/solidity/blob/c8ec79548b8f8825735ee96f1768e7fc5313d19e/libsolidity/codegen/ContractCompiler.cpp#L762)
@@ -144,7 +144,7 @@ enum class Instruction: uint8_t
 	SELFDESTRUCT = 0xff	///< halt execution and register account for later deletion
 };
 ```
-So we find something interesting here, `REVERT` corresponds to `0xfd` in the EVM bytecode but also next to it we find an instruction called `INVALID` which signals runtime errors like division by zero. Together `0xfd` and `0xfe` corresponds to handling Runtime exception in the EVM. Together these 2 constitute the bread and butter of the rollback mechanism in EVM. So let us open the Ethereum yellow paper and find these corresponding instructions in the instruction set:
+So we find something interesting here, `REVERT` corresponds to `0xfd` in the EVM bytecode but also next to it we find an instruction called `INVALID` which signals runtime errors like division by zero. Together `0xfd` and `0xfe` corresponds to the handling of Runtime exceptions in the EVM. Together these 2 constitute the bread and butter of the rollback mechanism in EVM. So let us open the Ethereum yellow paper and find these corresponding instructions in the instruction set:
 
 ![an image alt text]({{ site.baseurl }}/images/instruction.png "Instructions")
 
@@ -252,7 +252,7 @@ void State::rollback(size_t _savepoint)
 	}
 }
 ```
-We have finally arrived at the State file, which is the facade for operating on the Merkle Patricia Trie. A point of interest is the `m_changeLog` here  which looks like this
+We have finally arrived at the [State file](https://github.com/ethereum/cpp-ethereum/blob/6f0c62e759fe9c950dbd481c1514f869bdd70a93/libethereum/State.cpp#L478), which is the facade for operating on the Merkle Patricia Trie. A point of interest is the `m_changeLog` here  which looks like this
 ```c++
 std::vector<detail::Change> m_changeLog;
 ```

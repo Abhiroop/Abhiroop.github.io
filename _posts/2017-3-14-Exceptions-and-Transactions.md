@@ -174,7 +174,7 @@ try {
         program.fullTrace();
     }
 ``` 
-We see that on encountering an invalid opcode, it throws a runtime exception(To study all the exceptions look [here](https://github.com/ethereum/ethereumj/blob/ec87dc558394c20091166952cd7350b8a493b3ce/ethereumj-core/src/main/java/org/ethereum/vm/program/Program.java#L1180)). However on encountering that exception its spends all the gas, resets all future refunds and then finally builds the full trace and throws the exception. Now I am very sure someone who is `catch`ing this final `throw e` is most probably doing the rollback. But I wasn't able to trace back the entire flow. I am still working on it. I had better luck with the `C++` implementation below.
+We see that on encountering an invalid opcode, it throws a runtime exception(To study all the exceptions look [here](https://github.com/ethereum/ethereumj/blob/ec87dc558394c20091166952cd7350b8a493b3ce/ethereumj-core/src/main/java/org/ethereum/vm/program/Program.java#L1180)). Followed by that, on encountering that exception its spends all the gas, resets all future refunds and then finally builds the full trace and throws the exception. Now I am very sure someone who is `catch`ing this final `throw e` is most probably doing the rollback. But I wasn't able to trace back the entire flow. I am still working on it. I had better luck with the `C++` implementation below.
 
 **CPP-ETHEREUM**
 
@@ -192,9 +192,10 @@ void VM::interpretCases()
 	WHILE_CASES
 }
 ```
-It calls `throwBadInstruction()`. This function wraps it in `boost::exception` and throws a runtime exception which is caught here:
+It calls `throwBadInstruction()`. This function wraps it in `boost::exception` and throws a runtime exception which is caught [here](https://github.com/ethereum/cpp-ethereum/blob/6cbf511079660be953ddbed61772e200fbe87bec/libethereum/Executive.cpp#L416):
 
 ```c++
+\..\
 catch (VMException const& _e)
 		{
 			clog(StateSafeExceptions) << "Safe VM Exception. " << diagnostic_information(_e);

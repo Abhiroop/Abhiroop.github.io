@@ -72,7 +72,7 @@ The points to notice here in this definition are the functions `makeBlack` and `
 The trick is now writing and understanding the `balance` function. Now we know  that the insertion might have violated invariant 1 and as a result of which it might have created a tree with 2 consecutive red nodes. So all we have to think is given the original balanced tree with no violations what are the possible ways in which a red node might have been inserted which breaks the invariant 1. Let us see:
 Due to lack of a red pen I am using a blue pen to represent red nodes. So this is technically a blue black tree. But you get the point:
 
-Figure
+![an image alt text]({{ site.baseurl }}/images/Insertion.jpg "Insertion")
 
 Now algebraic data types and pattern matching makes it very easy to express each case. So if we write out the tree structure as demonstrated in the figure the 4 cases would look like this:
 
@@ -137,7 +137,7 @@ Now as red nodes don't contribute to the height of the tree and given invariant 
 
 Case 1: Root node is black and left subtree root is red
 
-Figure
+![an image alt text]({{ site.baseurl }}/images/Deletion1.jpg "Deletion1")
 
 Coloring `y` red and `x` black we increase the height of left subtree by 1 and the height of the right subtree remains unchanged and hence it gets balanced. So translating the diagram to Haskell:
 
@@ -153,7 +153,7 @@ So depending on the color of the root node there are 2 subcases in this:
 
 Case 2. i. Root node is black, right subtree root is black
 
-Figure.
+![an image alt text]({{ site.baseurl }}/images/Deletion2.jpg "Deletion2")
 
 Coloring `z` as red reduces the height of the right subtree by 1 but it might end up violating invariant 1. In which case we have to call the old `balance` function that we used in case of invariant 1 violation. We can define a simple helper `balance'` which takes the entire node instead of passing the left subtree, right subtree, color etc. So this branch becomes:
 
@@ -163,7 +163,7 @@ balL (T B t1 y (T B t2 z t3)) = balance' (T B t1 y (T R t2 z t3))
 
 Case 2. ii. Root node is black, right subtree root is red..
 
-Figure.
+![an image alt text]({{ site.baseurl }}/images/Deletion3.jpg "Deletion3")
 
 This is the most involved case. Here after rebalancing the tree the only issue is `t4`'s  height is still `n+1` which can be resolved by coloring its root red. However we need to rebalance the subtree of `(t3 z t4)` to resilve any violations of invariant 1.
 
@@ -214,7 +214,7 @@ So moving to the final case of the deletion which is fusing the 2 subtrees when 
 
 The cases are really simple when the color of 2 roots are different i.e. black and red or red and black.
 
-Figure.
+![an image alt text]({{ site.baseurl }}/images/Fuse1.jpg "Fuse1")
 
 which again translates very easily to the code:
 
@@ -227,7 +227,7 @@ The difficulty arises when the color of the roots are same.
 
 Consider the case when both the roots are red:
 
-Figure
+![an image alt text]({{ site.baseurl }}/images/Fuse2.jpg "Fuse2")
 
 The transformation above are captured in the code below:
 
@@ -243,7 +243,7 @@ Any violation of invariant 1 is handled in the balance functions above.
 
 Similarly the case when both roots are black:
 
-Figure:
+![an image alt text]({{ site.baseurl }}/images/Fuse3.jpg "Fuse3")
 
 if the top node of `s` is black we need to use `balL` because the height of the right subtree has increased. And if it is red we follow the transformation given in the figure above:
 
@@ -308,16 +308,18 @@ fuse (T B t1 x t2) (T B t3 y t4)  =
 
 The entire code is available [here](https://github.com/Abhiroop/okasaki/blob/master/app/RedBlackTree.hs).
 
-While the case of deletion is quite involved, if you take a look at the entire code for the red black tree its hardly 100 lines of Haskell. And it is persistent in nature by default. It would be much more difficult designing a thread safe red black tree in any other language. Most importantly, when teaching someone data structures for the first time, the syntax never intrudes on the way of the logic of the program. I have been working on this as part of a course on Advanced Data Structures and Algorithms that I am doing conducted by Dr. Venanzio Capretta and using Haskell has made understanding the logic dead simple.
+The above algorithm was first devised by Stefan Kahrs from University of Kent. There is an alternate red black deletion algorithm devised by Matt Might which uses auxiliary colors to simplify the cases. He has blogged about it in great detail [here](http://matt.might.net/articles/red-black-delete/).
+
+While the case of deletion is quite involved, if you take a look at the entire code for the red black tree, its hardly 100 lines of Haskell. And it is persistent in nature by default. It would be much more difficult designing a thread safe red black tree in any other language. Most importantly, when teaching someone data structures for the first time, the syntax never intrudes on the way of the logic of the program. I have been working on this as part of a course on Advanced Data Structures and Algorithms that I am doing conducted by Dr. Venanzio Capretta and using Haskell has made understanding the logic dead simple.
 
 -------------------------------------------------------------
 
 Type Level Trees
 -----------------
 
-In addition if we want, we can encode these invariants at the type level. Writing an entire type level Red Black Tree would require another post and Dr. Stephanie Weirich has done lots of work in that area and there are lots of her [presentations available online](https://www.youtube.com/watch?v=n-b1PYbRUOY).
+In addition if we want, we can encode these invariants at the type level. Writing an entire type level Red Black Tree would require another post and Dr. Stephanie Weirich has done lots of work in that area and there are many of her [presentations available online](https://www.youtube.com/watch?v=n-b1PYbRUOY).
 
-As a small taste of what we can do, we can encode the simple invariant that "The difference between the height of 2 subtree is maximum 1" to ensure that a `BST` is balanced. Fot that what we need to is to raise a number to the type level and say the f the height of left subtree is `n` then the height of the right subtree is either `n + 1` or `n - 1`.
+As a small taste of what we can do, we can encode the simple invariant that "The difference between the height of 2 subtree is maximum 1" to ensure that a `BST` is balanced. Fot that what we need, is to raise a number to the type level and say that "if the height of left subtree is `n` then the height of the right subtree is either `n + 1` or `n - 1`".
 
 We can represent numbers simply using Peano numerals. But first we need a couple of language extensions:
 

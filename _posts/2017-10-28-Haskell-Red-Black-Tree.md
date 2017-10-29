@@ -111,4 +111,207 @@ delete x t = makeBlack $ del x t
   where makeBlack (T _ a y b) = T B a y b
 ```
 
-This is fairly simple.
+This is fairly simple. Let us explore the `del` function in depth.
+
+So, in case of the `insert` function the balancing of the trees, conveniently unified into a single transformation but that is not the case for delete. The cases of balancing are different but symmetric to each other for the left and right subtrees and we have to handle the 2 cases differently. So we will declare 2 separate function `delL` and `delR` for the left and right subtree respectively. And what about the case when we actually arrive at the node which we want to delete. In that case we remove that node and `fuse` the left and right subtree together. We will look at the `fuse` function in detail at a later part of this article. So writing the `del` function:
+
+```haskell
+del :: (Ord a) => a -> Tree a -> Tree a
+del x t@(T _ l y r)
+  | x < y = delL x t
+  | x > y = delR x t
+  | otherwise = fuse l r
+```
+
+which literally translates from what we described in the earlier paragraph. So now before delving into the `delL` and `delR` function let us try to think about the balancing first. So for the corresponding `delL` and `delR` function we will have a `balL` and `balR` function which balance the left and right subtrees respectively when one is shorter than the other. The signature of `balL` and `balR` should be dead simple. Given an unbalanced tree it recolors the trees and outputs a balanced tree.
+
+```haskell
+balL :: Tree a -> Tree a
+
+balR :: Tree a -> Tree a
+```
+
+Now as red nodes don't contribute to the height of the tree and given invariant 1, that red nodes can only have black child, when a deletion of a node occurs, the violation of invariant 2 can happen and the left and right subtree might not be of equal height(Remember only black node contribute to the height of the tree.) 
+
+`balL` concerns the cases where deletion has occurred from the left subtree. Hence in `balL` we can assume that the left subtree is shorter than the right subtree. What are the possible cases?
+
+Case 1: Root node is black and left subtree root is red
+
+Figure
+
+Coloring `y` red and `x` black we increase the height of left subtree by 1 and the height of the right subtree remains unchanged and hence it gets balanced. So translating the diagram to Haskell:
+
+```haskell
+balL (T B (T R t1 x t2) y t3) = T R (T B t1 x t2) y t3
+```
+
+Case 2: Root node is black, left subtree root is black.
+
+If the left subtree root is black we can't touch the left tree as it is already shorter and altering the black node would shorten the height more. We need to look at the right subtree.
+
+So depending on the color of the root node there are 2 subcases in this:
+
+Case 2. i. Root node is black, right subtree root is black
+
+Figure.
+
+Coloring `z` as red reduces the height of the right subtree by 1 but it might end up violating invariant 1. In which case we have to call the old `balance` function that we used in case of invariant 1 violation. We can define a simple helper `balance'` which takes the entire node instead of passing the left subtree, right subtree, color etc. So this branch becomes:
+
+```haskell
+balL (T B t1 y (T B t2 z t3)) = balance' (T B t1 y (T R t2 z t3))
+```
+
+Case 2. ii. Root node is black, right subtree root is red..
+
+Figure.
+
+This is the most involved case. Here after rebalancing the tree the only issue is `t4`'s  height is still `n+1` which can be resolved by coloring its root red. However we need to rebalance the subtree of `(t3 z t4)` to resilve any violations of invariant 1.
+
+Hence the code translates to:
+
+```haskell
+balL (T B t1 y (T R (T B t2 u t3) z t4@(T B l value r))) =
+  T R (T B t1 y t2) u (balance' (T B t3 z (T R l value r)))
+```
+
+This concludes our cases for `balL` and `balR` is exactly symmetric to the cases of `balL`, except now the right subtree would be shorter. I am adding the code for that part just for reference.
+
+```haskell
+balR :: Tree a -> Tree a
+balR (T B t1 y (T R t2 x t3)) = T R t1 y (T B t2 x t3)
+balR (T B (T B t1 z t2) y t3) = balance' (T B (T R t1 z t2) y t3)
+balR (T B (T R t1@(T B l value r) z (T B t2 u t3)) y t4) =
+  T R (balance' (T B (T R l value r) z t2)) u (T B t3 y t4)
+```
+
+Now that we have `balL` and `balR` sorted we can start thinking about the `delL` and `delR` function. The signature of these functions are simple enough, given a node and tree it returns a tree with that node removed:
+
+```haskell
+delL :: (Ord a) => a -> Tree a -> Tree a
+
+delR :: (Ord a) => a -> Tree a -> Tree a
+``` 
+
+So if you look at the cases of balancing above, balancing is required only when there is a black root node, in case the node is red we just recurse down the path. So the red case is simple:
+
+```haskell
+delL x t@(T R t1 y t2) = T R (del x t1) y t2
+
+delR x t@(T R t1 y t2) = T R t1 y (del x t2)
+```
+
+Now in case the root node is black we just balance the entire tree after the delete:
+
+```haskell
+delL x t@(T B t1 y t2) = balL $ T B (del x t1) y t2
+
+delR x t@(T B t1 y t2) = balR $ T B t1 y (del x t2)
+```
+
+And thats all these are the possible cases of `delL` and `delR`.
+
+So moving to the final case of the deletion which is fusing the 2 subtrees when the node is found.
+
+The cases are really simple when the color of 2 roots are different i.e. black and red or red and black.
+
+Figure.
+
+which again translates very easily to the code:
+
+```haskell
+fuse t1@(T B _ _ _) (T R t3 y t4) = T R (fuse t1 t3) y t4
+fuse (T R t1 x t2) t3@(T B _ _ _) = T R t1 x (fuse t2 t3)
+```
+
+The difficulty arises when the color of the roots are same.
+
+Consider the case when both the roots are red:
+
+Figure
+
+The transformation above are captured in the code below:
+
+```haskell
+fuse (T R t1 x t2) (T R t3 y t4)  =
+  let s = fuse t2 t3
+  in case s of
+       (T R s1 z s2) -> (T R (T R t1 x s1) z (T R s2 y t4))
+       (T B _ _ _)   -> (T R t1 x (T R s y t4))
+```
+
+Any violation of invariant 1 is handled in the balance functions above.
+
+Similarly the case when both roots are black:
+
+Figure:
+
+if the top node of `s` is black we need to use `balL` because the height of the right subtree has increased. And if it is red we follow the transformation given in the figure above:
+
+```haskell
+fuse (T B t1 x t2) (T B t3 y t4)  =
+  let s = fuse t2 t3
+  in case s of
+       (T R s1 z s2) -> (T R (T B t1 x s1) z (T B s2 y t4)) -- consfusing case
+       (T B s1 z s2) -> balL (T B t1 x (T B s y t4))
+```
+
+Thats all. Compiling the entire code for delete we have:
+
+```haskell
+delete :: (Ord a) => a -> Tree a -> Tree a
+delete x t = makeBlack $ del x t
+  where makeBlack (T _ a y b) = T B a y b
+        makeBlack E           = E
+
+del :: (Ord a) => a -> Tree a -> Tree a
+del x t@(T _ l y r)
+  | x < y = delL x t
+  | x > y = delR x t
+  | otherwise = fuse l r
+
+delL :: (Ord a) => a -> Tree a -> Tree a
+delL x t@(T B t1 y t2) = balL $ T B (del x t1) y t2
+delL x t@(T R t1 y t2) = T R (del x t1) y t2
+
+balL :: Tree a -> Tree a
+balL (T B (T R t1 x t2) y t3) = T R (T B t1 x t2) y t3
+balL (T B t1 y (T B t2 z t3)) = balance' (T B t1 y (T R t2 z t3))
+balL (T B t1 y (T R (T B t2 u t3) z t4@(T B l value r))) =
+  T R (T B t1 y t2) u (balance' (T B t3 z (T R l value r)))
+
+delR :: (Ord a) => a -> Tree a -> Tree a
+delR x t@(T B t1 y t2) = balR $ T B t1 y (del x t2)
+delR x t@(T R t1 y t2) = T R t1 y (del x t2)
+
+balR :: Tree a -> Tree a
+balR (T B t1 y (T R t2 x t3)) = T R t1 y (T B t2 x t3)
+balR (T B (T B t1 z t2) y t3) = balance' (T B (T R t1 z t2) y t3)
+balR (T B (T R t1@(T B l value r) z (T B t2 u t3)) y t4) =
+  T R (balance' (T B (T R l value r) z t2)) u (T B t3 y t4)
+
+fuse :: Tree a -> Tree a -> Tree a
+fuse E t = t
+fuse t E = t
+fuse t1@(T B _ _ _) (T R t3 y t4) = T R (fuse t1 t3) y t4
+fuse (T R t1 x t2) t3@(T B _ _ _) = T R t1 x (fuse t2 t3)
+fuse (T R t1 x t2) (T R t3 y t4)  =
+  let s = fuse t2 t3
+  in case s of
+       (T R s1 z s2) -> (T R (T R t1 x s1) z (T R s2 y t4))
+       (T B _ _ _)   -> (T R t1 x (T R s y t4))
+fuse (T B t1 x t2) (T B t3 y t4)  =
+  let s = fuse t2 t3
+  in case s of
+       (T R s1 z s2) -> (T R (T B t1 x s1) z (T B s2 y t4))
+       (T B s1 z s2) -> balL (T B t1 x (T B s y t4))
+```
+
+The entire code is available [here](https://github.com/Abhiroop/okasaki/blob/master/app/RedBlackTree.hs).
+
+While the case of deletion is quite involved, if you take a look at the entire code for the red black tree its hardly 100 lines of Haskell. And it is persistent in nature by default. It would be much more difficult designing a thread safe red black tree in any other language. Most importantly, when teaching someone data structures for the first time, the syntax never intrudes on the way of the logic of the program. I have been working on this as part of a course on Advanced Data Structures and Algorithms that I am doing conducted by Dr. Venanzio Capretta and using Haskell has made understanding the logic dead simple.
+
+-------------------------------------------------------------
+
+In addition if we want, we can encode these invariants at the type level. Writing an entire type level Red Black Tree would require another post and Dr. Stephanie Weirich has done lots of work in that area and there are lots of her [presentations available online](https://www.youtube.com/watch?v=n-b1PYbRUOY).
+
+As a small taste of what we can do, we can encode the simple invariant that "The difference between the height of 2 subtree"

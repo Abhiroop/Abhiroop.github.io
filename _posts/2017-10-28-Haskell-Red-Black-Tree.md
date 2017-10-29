@@ -312,6 +312,31 @@ While the case of deletion is quite involved, if you take a look at the entire c
 
 -------------------------------------------------------------
 
+Type Level Trees
+-----------------
+
 In addition if we want, we can encode these invariants at the type level. Writing an entire type level Red Black Tree would require another post and Dr. Stephanie Weirich has done lots of work in that area and there are lots of her [presentations available online](https://www.youtube.com/watch?v=n-b1PYbRUOY).
 
-As a small taste of what we can do, we can encode the simple invariant that "The difference between the height of 2 subtree"
+As a small taste of what we can do, we can encode the simple invariant that "The difference between the height of 2 subtree is maximum 1" to ensure that a `BST` is balanced. Fot that what we need to is to raise a number to the type level and say the f the height of left subtree is `n` then the height of the right subtree is either `n + 1` or `n - 1`.
+
+We can represent numbers simply using Peano numerals. But first we need a couple of language extensions:
+
+```haskell
+{-# LANGUAGE GADTs, DataKinds  #-}
+```
+
+Followed by that define the Peano numerals and capture the invariant in the tree:
+
+```haskell
+data Nat = Zero | Succ Nat
+
+data T n a = NodeR (Tree n a) a (Tree (Succ n) a) -- right subtree has height + 1
+           | NodeL (Tree (Succ n) a) a (Tree n a) -- left subtree has height + 1
+           | Node (Tree n a) a (Tree n a)     -- both subtrees are of equal height
+
+data Tree n a where
+  Branch :: T n a -> Tree (Succ n) a
+  Leaf :: Tree Zero a
+```
+
+We can also raise relational operators to the type level using the `singletons` package by Richard Eisenberg and capture further invariants in the type level. But that will be material for another post. Till then enjoy writing more Haskell :)

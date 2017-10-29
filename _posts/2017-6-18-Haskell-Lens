@@ -1,0 +1,14 @@
+---
+layout: post
+title: Understanding Van Laarhoven Lens in Haskell
+---
+
+Lenses, also commonly known as functional references in Haskell, provide programmers an abstraction similar
+to getters and setters in object oriented programming. However being a pure functional language Haskell doesn't allow
+mutation unlike traditional getters and setters. As a result of which the API exposed in Haskell might look like plain
+mutation, the library inside does some neat tricks to make this work. This blog will look at the Van Laarhoven
+representation of Lenses and try to explain it in some detail.
+
+There is a blog post which Twan van Laarhoven wrote in 2009 proposing his representation of functional references. The
+blog written in a very conversational style presents the type signature of Lenses which is now used across all major Lens
+libraries.

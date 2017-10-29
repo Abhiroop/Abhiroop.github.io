@@ -62,7 +62,7 @@ The points to notice here in this definition are the functions `makeBlack` and `
 The trick is now writing and understanding the `balance` function. Now we know  that the insertion might have violated invariant 1 and as a result of which it might have created a tree with 2 consecutive red nodes. So all we have to think is given the original balanced tree with no violations what are the possible ways in which a red node might have been inserted which breaks the invariant 1. Let us see:
 Due to lack of a red pen I am using a blue pen to represent red nodes. So this is technically a blue black tree. But you get the point:
 
-<Figure>
+Figure
 
 Now algebraic data types and pattern matching makes it very easy to express each case. So if we write out the tree structure as demonstrated in the figure the 4 cases would look like this:
 
@@ -88,10 +88,12 @@ Languages like OCaml and SML support something called `OR patterns` which make i
 
 Now moving on to the `delete` operation. This one is lot more involved and we will do it step by step.
 
-First a deletion followed by any kind of balancing has a possibility of bubbling a red node to the top, so we need the `makeBlack` function that we used in the `insert` function, followed by that we can call an auxillary `del` function which will effectively delete the node and balance the tree. In Haskell:
+First a deletion followed by any kind of balancing has a possibility of bubbling a red node to the top, so we need the `makeBlack` function that we used in the `insert` function, followed by that we can call an auxiliary `del` function which will effectively delete the node and balance the tree. In Haskell:
 
 ```haskell
 delete :: (Ord a) => a -> Tree a -> Tree a
 delete x t = makeBlack $ del x t
   where makeBlack (T _ a y b) = T B a y b
 ```
+
+This is fairly simple.

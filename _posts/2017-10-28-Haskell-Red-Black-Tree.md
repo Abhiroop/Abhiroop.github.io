@@ -14,6 +14,8 @@ A red black tree is a type of a binary search tree with the ability to self bala
 From a practical perspective, it is not expected of you to code out an implementation of red black tree every other day but it is helpful to know the implementations and understand the trade-offs made so that performance analysis on some critical code can be made. Notably [TreeMap](http://grepcode.com/file/repository.grepcode.com/java/root/jdk/openjdk/8u40-b25/java/util/TreeMap.java) from Java collections is implemented using a Red Black Tree(however it is not a persistent implementation). In practise most implementations of `maps`, `sets` and other useful structures are implemented using balanced binary search trees. Hence without any further ado lets jump into the datatypes.
 
 ------------------------------------------------------
+Defining the tree
+----------------
 
 We will start by defining 2 colors red and black and use that as a metadata in our actual tree type.
 
@@ -43,6 +45,10 @@ member x (T _ a y b)
 ```
 
 This should be self explanatory. If we find the element we report `True` otherwise we recurse down the left or right subtree.
+
+------------------------------------------------
+Insertion
+---------
 
 Now lets look at one of the more involved operations: `insert`.
 
@@ -89,6 +95,8 @@ balance color a x b = T color a x b
 Languages like OCaml and SML support something called `OR patterns` which make it even simpler to write the function definition where multiple patterns have the same answer. And in fact there is a [GHC proposal](https://github.com/ghc-proposals/ghc-proposals/pull/43) in progress about adding OR patterns to Haskell. This implementation is much more readable, expressive and most importantly intuitive compared to any other imperative language implementations of the same idea. Writing a red black tree balancing algorithm is a big deal in such languages but with ADTs and pattern matching it literally begs to follow the diagram given above.
 
 -------------------------------------------------------------
+Deletion
+--------
 
 Now moving on to the `delete` operation. This one is lot more involved and we will do it step by step.
 

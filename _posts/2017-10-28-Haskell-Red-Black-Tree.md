@@ -5,7 +5,7 @@ title: Persistent Red Black Trees in Haskell
 
 While Haskell is steadily gaining mainstream adoption in the industry, it still remains one of the most viable languages used as a teaching medium. Even if we strip the fancy type level features in Haskell, algebraic data types and pattern matching are quite expressive enough to represent a lot of ideas.
 
-In this post I will be looking at the construction and operations of Red Black trees. Of special interest here would be the deletion operation, as the operation of `delete` is inherently opposed to Haskell's fundamentals of immutability. We will look at the various operations as creating a new version of the tree rather than mutating an existing version, which gives the persistent quality to our data structure.
+In this post I will be looking at the construction and operations of Red Black trees. Of special interest here would be the deletion of nodes, as the operation of `delete` is inherently opposed to Haskell's fundamentals of immutability. We will look at these various operations as creating a new version of the tree rather than mutating an existing version, which gives the persistent quality to our data structure.
 
 This post doesn't use any fancy type level features of Haskell(except at the very end) and assumes only basic familiarity with the language. However the deletion operation is quite involved and requires the reader to be fairly meticulous so as to not miss any of the possible cases.
 
@@ -34,7 +34,7 @@ Now for a red black tree to be balanced it needs to follow a set of invariants. 
 3. The root and leaves of the tree are black.
 ```
 
-Take some time to internalize these invariants, as they should not be broken under any circumstances. We can relax some of them locally in certain cases but we make sure some other functions at the global level handles the violation and rectifies it. We are going to start by implementing the `member` function which basically tells us if the element belongs to the tree or not. This is not very different from a regular `BST`.
+Take some time to internalize these invariants, as they should not be broken under any circumstances. Throughout the rest of the article these invariants are referred to a number of times by just referring to their serial number. We can relax some of them locally in certain cases but we make sure some other functions at the global level handles the violation and rectifies it. We are going to start by implementing the `member` function which basically tells us if the element belongs to the tree or not. This is not very different from a regular `BST`.
 
 ```haskell
 member :: (Ord a) => a -> Tree a -> Bool
@@ -103,7 +103,7 @@ Deletion
 
 Now moving on to the `delete` operation. This one is lot more involved and we will do it step by step.
 
-First a deletion followed by any kind of balancing has a possibility of bubbling a red node to the top, so we need the `makeBlack` function that we used in the `insert` function, followed by that we can call an auxiliary `del` function which will effectively delete the node and balance the tree. In Haskell:
+First a deletion followed by any kind of balancing has the possibility of bubbling a red node to the top, so we need the `makeBlack` function that we used in the `insert` function, followed by that we can call an auxiliary `del` function which will effectively delete the node and balance the tree. In Haskell:
 
 ```haskell
 delete :: (Ord a) => a -> Tree a -> Tree a

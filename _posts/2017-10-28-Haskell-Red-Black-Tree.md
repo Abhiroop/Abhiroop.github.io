@@ -2,6 +2,7 @@
 layout: post
 title: Persistent Red Black Trees in Haskell
 ---
+![an image alt text]({{ site.baseurl }}/images/RBTree.png "RB Tree")
 
 While Haskell is steadily gaining mainstream adoption in the industry, it still remains one of the most viable languages used as a teaching medium. Even if we strip the fancy type level features in Haskell, algebraic data types and pattern matching are quite expressive enough to represent a lot of ideas.
 

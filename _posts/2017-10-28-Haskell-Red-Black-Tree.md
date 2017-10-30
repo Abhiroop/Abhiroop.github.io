@@ -9,9 +9,11 @@ In this post I will be looking at the construction and operations of Red Black t
 
 This post doesn't use any fancy type level features of Haskell(except at the very end) and assumes only basic familiarity with the language. However the deletion operation is quite involved and requires the reader to be fairly meticulous so as to not miss any of the possible cases.
 
-A red black tree is a type of a binary search tree with the ability to self balance itself. This property of self balancing is highly desirable as a plain binary search tree reduces to `O(n)` worst case time complexity for `search`, `insert` and `delete` operations. The balancing nature of red black tree gives it a worst case time complexity of `O(log n)`. It is not truly balanced in the sense that the heights of the various subtrees can differ, but the height of the longest subtree would be a maximum of `2log(n+1)`, which effectively gives it a balanced nature.
+A red black tree is a type of a binary search tree with the ability to self balance itself. This property of self balancing is highly desirable as a plain binary search tree reduces to `O(n)` worst case time complexity for `search`, `insert` and `delete` operations. The balancing nature of red black tree gives it a worst case time complexity of `O(log n)`. It is not truly balanced, in the sense that the heights of the various subtrees can differ, but the height of the longest subtree would be a maximum of `2log(n+1)`, which effectively gives it a balanced nature.
 
-From a practical perspective, it is not expected of you to code out an implementation of red black tree every other day but it is helpful to know the implementations and understand the trade-offs made so that performance analysis on some critical code can be made. Notably [TreeMap](http://grepcode.com/file/repository.grepcode.com/java/root/jdk/openjdk/8u40-b25/java/util/TreeMap.java) from Java collections is implemented using a Red Black Tree(however it is not a persistent implementation). In practise most implementations of `maps`, `sets` and other useful structures are implemented using balanced binary search trees. Hence without any further ado lets jump into the datatypes.
+From a practical perspective, it is not expected of you to code out a fully functional red black tree every other day, but it is helpful to know the implementations and understand the trade-offs made so that performance analysis on some critical code can be made. 
+
+Notably, [TreeMap](http://grepcode.com/file/repository.grepcode.com/java/root/jdk/openjdk/8u40-b25/java/util/TreeMap.java) from the Java collections library is implemented using a Red Black Tree(however it is not a persistent implementation). In practice, most implementations of `maps`, `sets` and other useful structures are implemented using balanced binary search trees. Hence without any further ado lets jump into the datatypes.
 
 ------------------------------------------------------
 
@@ -34,7 +36,7 @@ Now for a red black tree to be balanced it needs to follow a set of invariants. 
 3. The root and leaves of the tree are black.
 ```
 
-Take some time to internalize these invariants, as they should not be broken under any circumstances. Throughout the rest of the article these invariants are referred to a number of times by just referring to their serial number. We can relax some of them locally in certain cases but we make sure some other functions at the global level handles the violation and rectifies it. We are going to start by implementing the `member` function which basically tells us if the element belongs to the tree or not. This is not very different from a regular `BST`.
+Take some time to internalize these invariants, as they should not be broken under any circumstances. Throughout the rest of the article, these invariants are referred to a number of times by just referring to their serial number. We can relax some of them locally in certain cases but we make sure some other functions at the global level handles the violation and rectifies it. We are going to start by implementing the `member` function, which basically tells us if the element belongs to the tree or not. This is not very different from a regular `BST`.
 
 ```haskell
 member :: (Ord a) => a -> Tree a -> Bool
@@ -67,14 +69,14 @@ insert x s = makeBlack $ ins s
         makeBlack (T _ a y b) = T B a y b
 ```
 
-The points to notice here in this definition are the functions `makeBlack` and `balance.` Minus those functions the insertion is exactly similar to an insert in a `BST`. The `makeBlack` function is also a fairly simple function, given a Node it changes the color of the node to black irrespective of the node's color. The purpose of this function is that after applying `balance` recursively the final tree might have 2 consecutive red nodes at the top of the tree. This would be a violation of invariant 1. By blackening the root we restore invariant 1 as well as we invariant 2 stays intact, as only the root of the tree gets colored. A more opt name for the function should have been `blackenRoot` perhaps. However this is quite simple.
+The points to notice here in this definition are the functions `makeBlack` and `balance.` Minus those functions the insertion is exactly similar to an insert in a `BST`. The `makeBlack` function is also a fairly simple function, given a Node it changes the color of the node to black irrespective of the node's color. The purpose of this function is that, after applying `balance` recursively the final tree might have 2 consecutive red nodes at the top of the tree. This would be a violation of invariant 1. By blackening the root we restore invariant 1 as well as we invariant 2 stays intact, as only the root of the tree gets colored. A more apt name for the function, perhaps should have been `blackenRoot`. However this is quite simple.
 
-The trick is now writing and understanding the `balance` function. Now we know  that the insertion might have violated invariant 1 and as a result of which it might have created a tree with 2 consecutive red nodes. So all we have to think is given the original balanced tree with no violations what are the possible ways in which a red node might have been inserted which breaks the invariant 1. Let us see:
-Due to lack of a red pen I am using a blue pen to represent red nodes. So this is technically a blue black tree. But you get the point:
+The trick is now writing and understanding the `balance` function. Now we know  that the insertion might have violated invariant 1 and as a result of which it might have created a tree with 2 consecutive red nodes. So all we have to think is, given the original balanced tree with no violations, what are the possible ways in which a red node might have been inserted which breaks the invariant 1. Let us see:
+(Due to lack of a red pen I am using a blue pen to represent red nodes. So this is technically a blue black tree. But you get the point):
 
 ![an image alt text]({{ site.baseurl }}/images/Insertion.jpg "Insertion")
 
-Now algebraic data types and pattern matching makes it very easy to express each case. So if we write out the tree structure as demonstrated in the figure the 4 cases would look like this:
+Now algebraic data types and pattern matching makes it very easy to express each case. So if we write out the tree structure as demonstrated in the figure, the 4 cases would look like this:
 
 ```haskell
 T B (T R (T R a x b) y c) z d  
@@ -83,7 +85,7 @@ T B a x (T R (T R b y c) z d)
 T B a x (T R b y (T R c z d)) 
 ```
 
-So all we have to do is find a way to balance each of the cases. As it is given in the figure, the solution to balancing each of the 4 cases is the exact same. By using this transformation the tree restores the invariant 1 and invariant 2 stays intact too(Invariant 3 is almost always intact and easiest to enforce). So what happens for the other configurations of the tree? We return the nodes intact. So writing the same in Haskell:
+So all we have to do is find a way to balance each of the cases. As it is given in the figure, the solution to balancing each of the 4 cases is the exact same. By using this transformation, the tree restores the invariant 1. And invariant 2 stays intact too(Invariant 3 is almost always intact and easiest to enforce). So what happens for the other configurations of the tree? We return the nodes intact. So writing the same in Haskell:
 
 ```haskell
 balance :: Color -> Tree a -> a -> Tree a -> Tree a
@@ -113,7 +115,7 @@ delete x t = makeBlack $ del x t
 
 This is fairly simple. Let us explore the `del` function in depth.
 
-So, in case of the `insert` function the balancing of the trees, conveniently unified into a single transformation but that is not the case for delete. The cases of balancing are different but symmetric to each other for the left and right subtrees and we have to handle the 2 cases differently. So we will declare 2 separate function `delL` and `delR` for the left and right subtree respectively. And what about the case when we actually arrive at the node which we want to delete. In that case we remove that node and `fuse` the left and right subtree together. We will look at the `fuse` function in detail at a later part of this article. So writing the `del` function:
+So, in case of the `insert` function, the balancing of the trees, conveniently unified into a single transformation but that is not the case for delete. The cases of balancing are different but symmetric to each other for the left and right subtrees and we have to handle the 2 cases separately. So we will declare 2 separate function `delL` and `delR` for the left and right subtree respectively. And what about the case when we actually arrive at the node which we want to delete? In that case we remove that node and `fuse` the left and right subtree together. We will look at the `fuse` function in detail at a later part of this article. So writing the `del` function:
 
 ```haskell
 del :: (Ord a) => a -> Tree a -> Tree a
@@ -123,7 +125,7 @@ del x t@(T _ l y r)
   | otherwise = fuse l r
 ```
 
-which literally translates from what we described in the earlier paragraph. So now before delving into the `delL` and `delR` function let us try to think about the balancing first. So for the corresponding `delL` and `delR` function we will have a `balL` and `balR` function which balance the left and right subtrees respectively when one is shorter than the other. The signature of `balL` and `balR` should be dead simple. Given an unbalanced tree it recolors the trees and outputs a balanced tree.
+which literally translates from what we described in the earlier paragraph. So now before delving into the `delL` and `delR` function let us try to think about the balancing first. So for the corresponding `delL` and `delR` function we will have a `balL` and `balR` function which balance the left and right subtrees respectively, when one is shorter than the other. The signature of `balL` and `balR` should be dead simple. Given an unbalanced tree it recolors and balances the trees and outputs a balanced tree.
 
 ```haskell
 balL :: Tree a -> Tree a
@@ -131,7 +133,7 @@ balL :: Tree a -> Tree a
 balR :: Tree a -> Tree a
 ```
 
-Now as red nodes don't contribute to the height of the tree and given invariant 1, that red nodes can only have black child, when a deletion of a node occurs, the violation of invariant 2 can happen and the left and right subtree might not be of equal height(Remember only black node contribute to the height of the tree.) 
+Now as red nodes don't contribute to the height of the tree and given invariant 1, that red nodes can only have black child, when a deletion of a node occurs, the violation of invariant 2 can happen and the left and right subtree might not be of equal height(Remember only black nodes contribute to the height of the tree.) 
 
 `balL` concerns the cases where deletion has occurred from the left subtree. Hence in `balL` we can assume that the left subtree is shorter than the right subtree. What are the possible cases?
 
@@ -165,7 +167,7 @@ Case 2. ii. Root node is black, right subtree root is red..
 
 ![an image alt text]({{ site.baseurl }}/images/Deletion3.jpg "Deletion3")
 
-This is the most involved case. Here after rebalancing the tree the only issue is `t4`'s  height is still `n+1` which can be resolved by coloring its root red. However we need to rebalance the subtree of `(t3 z t4)` to resilve any violations of invariant 1.
+This is the most involved case. Here after rebalancing the tree the only issue is `t4`'s  height is still `n+1` which can be resolved by coloring its root red. However we need to rebalance the subtree of `(t3 z t4)` to resolve any violations of invariant 1.
 
 Hence the code translates to:
 
@@ -174,7 +176,7 @@ balL (T B t1 y (T R (T B t2 u t3) z t4@(T B l value r))) =
   T R (T B t1 y t2) u (balance' (T B t3 z (T R l value r)))
 ```
 
-This concludes our cases for `balL` and `balR` is exactly symmetric to the cases of `balL`, except now the right subtree would be shorter. I am adding the code for that part just for reference.
+This concludes our cases for `balL`. And `balR` is exactly symmetric to the cases of `balL`, except now the right subtree would be shorter. I am adding the code for that part just for reference.
 
 ```haskell
 balR :: Tree a -> Tree a
@@ -208,9 +210,9 @@ delL x t@(T B t1 y t2) = balL $ T B (del x t1) y t2
 delR x t@(T B t1 y t2) = balR $ T B t1 y (del x t2)
 ```
 
-And thats all these are the possible cases of `delL` and `delR`.
+And thats all, these are the possible cases of `delL` and `delR`.
 
-So moving to the final case of the deletion which is fusing the 2 subtrees when the node is found.
+So moving to the final case of the deletion, which is fusing the 2 subtrees when the node is found.
 
 The cases are really simple when the color of 2 roots are different i.e. black and red or red and black.
 
@@ -239,7 +241,7 @@ fuse (T R t1 x t2) (T R t3 y t4)  =
        (T B _ _ _)   -> (T R t1 x (T R s y t4))
 ```
 
-Any violation of invariant 1 is handled in the balance functions above.
+Any violation of invariant 1 is handled by the balance functions at the upper layers of the recursion.
 
 Similarly the case when both roots are black:
 
@@ -255,7 +257,7 @@ fuse (T B t1 x t2) (T B t3 y t4)  =
        (T B s1 z s2) -> balL (T B t1 x (T B s y t4))
 ```
 
-Thats all. Compiling the entire code for delete we have:
+Thats all. Putting together the entire code for delete we have:
 
 ```haskell
 delete :: (Ord a) => a -> Tree a -> Tree a
@@ -310,16 +312,18 @@ The entire code is available [here](https://github.com/Abhiroop/okasaki/blob/mas
 
 The above algorithm was first devised by Stefan Kahrs from University of Kent. There is an alternate red black deletion algorithm devised by Matt Might which uses auxiliary colors to simplify the cases. He has blogged about it in great detail [here](http://matt.might.net/articles/red-black-delete/).
 
-While the case of deletion is quite involved, if you take a look at the entire code for the red black tree, its hardly 100 lines of Haskell. And it is persistent in nature by default. It would be much more difficult designing a thread safe red black tree in any other language. Most importantly, when teaching someone data structures for the first time, the syntax never intrudes on the way of the logic of the program. I have been working on this as part of a course on Advanced Data Structures and Algorithms that I am doing conducted by Dr. Venanzio Capretta and using Haskell has made understanding the logic dead simple.
+While the case of deletion is quite involved, if you take a look at the entire code for the red black tree, its hardly 100 lines of Haskell. And it is persistent in nature by default. It would be much more difficult designing a thread safe red black tree in any other imperative language. Most importantly, when teaching someone data structures for the first time, the syntax never intrudes on the way of the logic of the program. I have been working on this as part of a course on Advanced Data Structures and Algorithms that I am taking, and using Haskell has made understanding the logic dead simple.
 
 -------------------------------------------------------------
 
 Type Level Trees
 -----------------
 
-In addition if we want, we can encode these invariants at the type level. Writing an entire type level Red Black Tree would require another post and Dr. Stephanie Weirich has done lots of work in that area and there are many of her [presentations available online](https://www.youtube.com/watch?v=n-b1PYbRUOY).
+In addition if we want, we can encode these invariants at the type level. Writing an entire type level Red Black Tree would require another post.
 
-As a small taste of what we can do, we can encode the simple invariant that "The difference between the height of 2 subtree is maximum 1" to ensure that a `BST` is balanced. Fot that what we need, is to raise a number to the type level and say that "if the height of left subtree is `n` then the height of the right subtree is either `n + 1` or `n - 1`".
+Stephanie Weirich from University of Pennsylvania has done lots of work in that area and there are many of her [presentations available online](https://www.youtube.com/watch?v=n-b1PYbRUOY).
+
+As a small taste of what we can do, we can encode the simple invariant that "The difference in height between the 2 subtrees is maximum 1" to ensure that a `BST` is balanced. Fot that, what we need, is to raise a number to the type level and say that "if the height of left subtree is `n` then the height of the right subtree is either `n + 1` or `n - 1` and vice versa".
 
 We can represent numbers simply using Peano numerals. But first we need a couple of language extensions:
 

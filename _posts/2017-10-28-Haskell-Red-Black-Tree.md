@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Persistent Red Black Trees in Haskell
+comments: true
 ---
 ![an image alt text]({{ site.baseurl }}/images/RBTree.png "RB Tree")
 

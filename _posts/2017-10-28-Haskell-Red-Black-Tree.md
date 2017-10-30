@@ -313,7 +313,7 @@ The entire code is available [here](https://github.com/Abhiroop/okasaki/blob/mas
 
 The above algorithm was first devised by Stefan Kahrs from University of Kent. There is an alternate red black deletion algorithm devised by Matt Might which uses auxiliary colors to simplify the cases. He has blogged about it in great detail [here](http://matt.might.net/articles/red-black-delete/).
 
-While the case of deletion is quite involved, if you take a look at the entire code for the red black tree, its hardly 100 lines of Haskell. And it is persistent in nature by default. It would be much more difficult designing a thread safe red black tree in any other imperative language. Most importantly, when teaching someone data structures for the first time, the syntax never intrudes on the way of the logic of the program. I have been working on this as part of a course on Advanced Data Structures and Algorithms that I am taking, and using Haskell has made understanding the logic dead simple.
+While the case of deletion is quite involved, if you take a look at the entire code for the red black tree, its hardly 100 lines of Haskell. And it is persistent in nature by default. It would be much more difficult designing a thread safe red black tree in any other imperative language. Most importantly, when teaching someone data structures for the first time, the syntax never intrudes in the way of the logic of the program. I have been working on this as part of a course on Advanced Data Structures and Algorithms that I am taking, and using Haskell has made understanding the logic dead simple.
 
 -------------------------------------------------------------
 

@@ -2016,6 +2016,29 @@ Vectorizing dot product</p>
 
   </section>
   <section>
+    <p>Vector Lists</p>
+<pre><code class="lang-haskell"><span class="hljs-title">dotVec</span> :: [<span class="hljs-type">Float</span>] -&gt; [<span class="hljs-type">Float</span>] -&gt; <span class="hljs-type">Float</span>
+<span class="hljs-title">dotVec</span> xs ys =
+  fold (\x y -&gt; x + y :: <span class="hljs-type">FloatX4</span>) (\x y -&gt; x + y :: <span class="hljs-type">Float</span>) <span class="hljs-number">0</span> $
+  zipVec
+    (\x y -&gt; x * y :: <span class="hljs-type">FloatX4</span>)
+    (\x y -&gt; x * y :: <span class="hljs-type">Float</span>)
+    (toVecList xs)
+    (toVecList ys)</code></pre>
+<p>Vector Arrays </p>
+<pre><code class="lang-Haskell"><span class="hljs-title">dotVec'</span> :: [<span class="hljs-type">Float</span>] -&gt; [<span class="hljs-type">Float</span>] -&gt; <span class="hljs-type">Float</span>
+<span class="hljs-title">dotVec'</span> xs ys
+ = <span class="hljs-keyword">let</span> l1 = length xs
+       l2 = length ys
+    <span class="hljs-keyword">in</span> fold (\x y -&gt; x + y :: <span class="hljs-type">FloatX4</span>) (\x y -&gt; x + y :: <span class="hljs-type">Float</span>) <span class="hljs-number">0</span> $
+       zipVec
+        (\x y -&gt; x * y :: <span class="hljs-type">FloatX4</span>)
+        (\x y -&gt; x * y :: <span class="hljs-type">Float</span>)
+        (toVecArray (<span class="hljs-type">Z</span> :. l1) xs)
+        (toVecArray (<span class="hljs-type">Z</span> :. l2) ys)</code></pre>
+
+  </section>
+  <section>
     <p>How are the <code>Data.Operations</code> operators implemented?</p>
 
   </section>

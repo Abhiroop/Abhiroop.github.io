@@ -6,9 +6,9 @@ permalink: /about/
 
 <img src="https://scontent-lhr3-1.cdninstagram.com/vp/511fe01d0aeabaddc12259111e8510ec/5E350D58/t51.2885-15/e35/12394072_508480052659859_1126277562_n.jpg?_nc_ht=scontent-lhr3-1.cdninstagram.com&_nc_cat=111" width="200" height="200" />
 
-I am currently pursuing my PhD at Chalmers University working on the [Octopi](https://octopi.chalmers.se) project. I am a Haskell programmer. I research on programming languages, compilers and parallel programming. I mostly hack on the Glasgow Haskell Compiler (GHC). In a past life I used to be a JVM aficionado and ended up knowing some dark secrets about the JLS and the JVM GC mechanisms. 
+I am currently pursuing my PhD at Chalmers University working on the [Octopi](https://octopi.chalmers.se) project. I majorly program in Haskell and C. My current research themes revolve around programming languages, compilers, hardware and embedded systems. I used to hack on the Glasgow Haskell Compiler (GHC). I am currently designing a functional programming language for programming heavily memory constrained devices (anything less than an MB). In a past life I used to be a JVM aficionado and ended up knowing some dark secrets about the JLS and the JVM GC mechanisms. 
 
-Get in touch if you want to talk about functional programming, lazy languages, type systems, compilers, parallel programming, distributed systems and more!
+Get in touch if you want to talk about functional programming,type systems, compilers, embedded systems, distributed systems and more!
 
 ### Standing Invitation
 

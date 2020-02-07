@@ -4,7 +4,7 @@ title: About
 permalink: /about/
 ---
 
-<img src="https://github.com/Abhiroop/Abhiroop.github.io/blob/master/image.png" width="200" height="200" />
+<img src="https://raw.githubusercontent.com/Abhiroop/Abhiroop.github.io/master/image.png" width="200" height="200" />
 
 I am currently pursuing my PhD at Chalmers University working on the [Octopi](https://octopi.chalmers.se) project. I majorly program in Haskell and C. My current research themes revolve around programming languages, compilers, hardware and embedded systems. I used to hack on the Glasgow Haskell Compiler (GHC). I am currently designing a functional programming language for programming heavily memory constrained devices (anything less than an MB). In a past life I used to be a JVM aficionado and ended up knowing some dark secrets about the JLS and the JVM GC mechanisms. 
 

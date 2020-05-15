@@ -4,7 +4,7 @@ title: About
 permalink: /about/
 ---
 
-![an image alt text]({{ site.baseurl }}/images/image.png =250x "Abhi")
+![an image alt text]({{ site.baseurl }}/images/image.png =0.5x "Abhi")
 
 I am a second year PhD student at Chalmers University. I work on the [Octopi](https://octopi.chalmers.se) project. I am currently in the process of designing a purely functional programming language for programming heavily memory constrained devices (anything less than 10 MB). I am interested in the following topics in no particular order:
 

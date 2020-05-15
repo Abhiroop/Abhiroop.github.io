@@ -4,7 +4,7 @@ title: About
 permalink: /about/
 ---
 
-<img src="https://raw.githubusercontent.com/Abhiroop/Abhiroop.github.io/09ddc6f745dfd0f15b2018e2b94dbdc6a8a66d87/image.png?token=AAXY4LE2XT5EIVN6HFQDRDK6Y75AE" width="200" height="200" />
+<img src="https://i.ibb.co/hDMWn0y/image.png" width="200" height="200" />
 
 I am a second year PhD student at Chalmers University. I work on the [Octopi](https://octopi.chalmers.se) project. I am currently in the process of designing a purely functional programming language for programming heavily memory constrained devices (anything less than 10 MB). I am interested in the following topics in no particular order:
 

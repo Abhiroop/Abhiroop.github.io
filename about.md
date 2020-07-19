@@ -6,7 +6,7 @@ permalink: /about/
 
 <img src="https://i.ibb.co/hDMWn0y/image.png" width="200" height="200" />
 
-I am a second year PhD student at Chalmers University. I work on the [Octopi](https://octopi.chalmers.se) project. I am currently in the process of designing a purely functional programming language for programming heavily memory constrained devices (anything less than 10 MB). I am interested in the following topics in no particular order:
+I am a second year PhD student at Chalmers University. I work on the [Octopi](https://octopi.chalmers.se) project. I am currently in the process of designing a purely functional programming language for programming heavily memory constrained devices (anything less than 10 MB). I am interested in the following topics in no particular order :
 
 - Compilers
 - Type systems

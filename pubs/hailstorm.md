@@ -1,9 +1,8 @@
 ---
 layout: page
+title: Hailstorm : A Statically-Typed, Purely Functional Language for IoT Applications
 permalink: /pubs/hailstorm
 ---
-
-### Hailstorm : A Statically-Typed, Purely Functional Language forIoT Applications
 
 **Abstract -** With the growing ubiquity of *Internet of Things* (IoT), more complex logic is being programmed on resource-constrained IoT devices, almost exclusively using the C 
 programming language. While C provides low-level control over memory, it lacks a number of high-level programming abstractions such as higher-order functions, 

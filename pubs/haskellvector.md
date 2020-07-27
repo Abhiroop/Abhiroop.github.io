@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Superword Level Parallelism in the Glasgow Haskell Compiler
-permalink: /pubs/hailstorm
+permalink: /pubs/haskellvector
 ---
 
 **Abstract -** Superword parallelism or vectorisation has been a popular high performance computing technique in supercomputers for nearly 50 years now.  With the rise of various 

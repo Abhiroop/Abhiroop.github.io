@@ -18,5 +18,5 @@ in an imperative shell. The language borrows the combinators of arrowized FRP, b
 progress, driven by examples. So far, we have evaluated Hailstorm by writing standard examples from the literature (earthquake detection, a railway crossing system 
 and various other clocked systems), and also running examples on the GRiSP embedded systems board, through generation of Erlang.
 
-[Paper at PPDP 2020](https://abhiroop.github.io/pubs/hailstorm.pdf)                   
+[Paper at PPDP 2020](https://abhiroop.github.io/pubs/hailstorm_ppdp.pdf)                   
 [Extended Version](https://abhiroop.github.io/pubs/hailstorm.pdf)

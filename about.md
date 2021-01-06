@@ -6,15 +6,22 @@ permalink: /about/
 
 <img src="https://i.ibb.co/hDMWn0y/image.png" width="200" height="200" />
 
-I am a second year PhD student at Chalmers University. I work on the [Octopi](https://octopi.chalmers.se) project. I am currently in the process of designing a purely functional programming language for programming heavily memory constrained devices (anything less than 10 MB). I am interested in the following topics in no particular order :
+I am a third year PhD student at Chalmers University. I work on the [Octopi](https://octopi.chalmers.se) project. 
+
+I currently spend my time attempting to unify various notions of **communication**, **concurrency** and **security** into a general language and runtime framework. My experiment testbed is centered around low-powered, memory-constrained IoT applications which makes the challenge all the more harder but much more interesting!
+
+Topic-wise I am broadly interested in the following in no particular order :
 
 - Compilers
+- Virtual Machines
+- Concurrency
+- Computer Architecture
 - Type systems
 - Static Analysis
-- Computer Architecture
-- Concurrency
 
-I majorly program in Haskell and C. I hacked on the Glasgow Haskell Compiler (GHC) to add support for vector instruction for my Masters.  In a past life, I used to be a JVM aficionado and ended up knowing some dark secrets about the JLS and the JVM GC mechanisms. 
+
+
+I majorly program in Haskell and C. I hacked on the Glasgow Haskell Compiler (GHC) to add support for vector instruction for my Masters. In a past life, I used to be a JVM aficionado and ended up knowing some dark secrets about the JLS and the JVM GC mechanisms. 
 
 ### Standing Invitation
 

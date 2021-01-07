@@ -24,6 +24,8 @@ Topic-wise I am broadly interested in the following in no particular order :
 
 <!-- I majorly program in Haskell and C. I hacked on the Glasgow Haskell Compiler (GHC) to add support for vector instruction for my Masters. In a past life, I used to be a JVM aficionado and ended up knowing some dark secrets about the JLS and the JVM GC mechanisms.  -->
 
-### Standing Invitation
+### An interesting quote
 
-Inspired by [Patrick McKenzie](https://www.kalzumeus.com/standing-invitation/) and [Lars Hupel](https://lars.hupel.info/about/) I am offering a standing invitation: *If you want to talk about research or software (or hardware), I want to talk to you.* [Contact me.](mailto:sarkara@chalmers.se)
+> "It has long been my personal view that the separation of practical and theoretical work is artificial and injurious. Much of the practical work done in computing, both in software and in hardware design, is unsound and clumsy because the people who do it have not any clear understanding of the fundamental design principles of their work. Most of the abstract mathematical and theoretical work is sterile because it has no point of contact with real computing." ~ Christopher Strachey
+
+[You can contact me here.](mailto:sarkara@chalmers.se)

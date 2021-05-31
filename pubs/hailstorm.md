@@ -11,5 +11,5 @@ with a strict typing discipline. It supports features like higher-order function
 a declarative manner. Applications running on these devices tend to be heavily dominated by I/O. Hailstorm tracks side effects like I/O in its type system using 
 *resource types*. This choice allowed us to explore the design of a purely functional standalone language, in an area where it is more common to embed a functional core in an imperative shell. The language borrows the combinators of arrowized FRP, but has discrete-time semantics. The design of the full set of combinators is work in progress, driven by examples. So far, we have evaluated Hailstorm by writing standard examples from the literature (earthquake detection, a railway crossing system and various other clocked systems), and also running examples on the GRiSP embedded systems board, through generation of Erlang.
 
-[Paper at PPDP 2020](https://abhiroop.github.io/pubs/hailstorm_ppdp.pdf)                   
+[Paper at PPDP 2020](https://abhiroop.github.io/pubs/hailstorm_ppdp.pdf)    [Arxiv link](https://arxiv.org/abs/2105.13468)                
 [Extended Version](https://abhiroop.github.io/pubs/hailstorm.pdf)

@@ -11,6 +11,8 @@ description: λ | Computation
 # URL of your avatar or profile pic (you could use your GitHub profile pic)
 avatar: https://wiki.haskell.org/wikiupload/4/4a/HaskellLogoStyPreview-1.png
 
+future: true
+
 #
 # Flags below are optional
 #

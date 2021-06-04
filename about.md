@@ -10,7 +10,7 @@ I am a third year PhD student at Chalmers University. I work on the [Octopi](htt
 
 I am currently thinking about how **asynchrony** manifests itself in programming languages, natural languages and the physical world in general. 
 
-As a consequence of the above I am searching for ways to **structure asynchrony** into a general language and runtime framework. My experiment testbed is centered around low-powered, memory-constrained IoT applications which makes the challenge all the more harder but much more interesting!
+As a consequence of the above, I am searching for ways to **structure asynchrony** into a general language and runtime framework. My experiment testbed is centred around low-powered, memory-constrained microcontrollers running embedded and IoT applications.
 
 Topic-wise I am broadly interested in the following in no particular order :
 

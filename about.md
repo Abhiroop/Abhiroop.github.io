@@ -24,8 +24,12 @@ Topic-wise I am broadly interested in the following in no particular order :
 
 <!-- I majorly program in Haskell and C. I hacked on the Glasgow Haskell Compiler (GHC) to add support for vector instruction for my Masters. In a past life, I used to be a JVM aficionado and ended up knowing some dark secrets about the JLS and the JVM GC mechanisms.  -->
 
-### A quote that drives my research:
+### Quotes that drives my research:
+
+> "The price of reliability is the pursuit of the utmost simplicity. It is a price which the very rich may find hard to pay." ~ Tony Hoare
 
 > "It has long been my personal view that the separation of practical and theoretical work is artificial and injurious. Much of the practical work done in computing, both in software and in hardware design, is unsound and clumsy because the people who do it have not any clear understanding of the fundamental design principles of their work. Most of the abstract mathematical and theoretical work is sterile because it has no point of contact with real computing." ~ Christopher Strachey
+
+I recommend people interested in computer science to read Fred Brooks' essay on [The Computer Scientist as Toolsmith](https://www.cs.unc.edu/~brooks/Toolsmith-CACM.pdf).
 
 [You can contact me here.](mailto:sarkara@chalmers.se)

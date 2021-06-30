@@ -36,3 +36,7 @@ Topic-wise I am broadly interested in the following in no particular order :
 
 [The Computer Scientist as Toolsmith](https://www.cs.unc.edu/~brooks/Toolsmith-CACM.pdf).
 
+### Book Reviews
+
+I have started reviewing books on Goodreads. You can find a collection of my reviews [here](https://abhiroop.github.io/books/)
+

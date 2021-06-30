@@ -1,4 +1,4 @@
-After nearly a 15 years hiatus, I have once again (Thanks to the pandemic) picked up my old hobby of reading! I decided to write my reviews, which will highlight what I immediately felt after completing that book, on Goodreads. For you - weary wanderer of the Internet World, here are my reviews:
+After nearly a 15 years hiatus, I have once again (Thanks to the pandemic) picked up my old hobby of reading! I decided to write my reviews, which will highlight what I immediately felt after completing that book, on Goodreads. For you, weary wanderer of the Internet realm, here are my reviews:
 
 1. [Deep Work: Rules for Focused Success in a Distracted World - Cal Newport](https://www.goodreads.com/review/show/3582859556)
 2. [Great Thinkers: Simple Tools from 60 Great Thinkers to Improve Your Life Today - Alain de Botton](https://www.goodreads.com/review/show/3754404091)

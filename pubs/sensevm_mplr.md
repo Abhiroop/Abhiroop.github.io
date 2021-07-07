@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Higher-Order Concurrency for Microcontrollers
-permalink: /pubs/sensevmmplr
+permalink: /pubs/sensevm_mplr
 ---
 
 **Abstract -** Programming microcontrollers involves low level interfacing with hardware and peripherals that are concurrent and reactive. Such programs are typically written in a mixture of C and assembly using concurrent language extensions (like FreeRTOS tasks and semaphores), resulting in unsafe, callback-driven, error-prone and difficult-to-maintain code.

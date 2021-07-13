@@ -8,7 +8,7 @@ permalink: /about/
 
 I am a third year PhD student at Chalmers University. I work on the [Octopi](https://octopi.chalmers.se) project. 
 
-I am currently thinking about how **asynchrony** manifests itself in programming languages, natural languages and the physical world in general. 
+I am currently thinking about how **asynchrony** manifests itself in programming languages, natural languages and the wider physical world. 
 
 As a consequence of the above, I am searching for ways to **structure asynchrony** into a general language and runtime framework. My experiment testbed is centred around low-powered, memory-constrained microcontrollers running embedded and IoT applications.
 

@@ -36,5 +36,5 @@ I wonder what needs to be done in India to emulate the Europen model. It is a co
 
 It seems, under all circumstances, the mass of students suffers. How do we cope with this? What is the ideal solution? I have no answers but only questions.
 
-[1] https://en.wikipedia.org/wiki/Breakup_of_the_Bell_System  
+[1] [Breakup of the Bell System](https://en.wikipedia.org/wiki/Breakup_of_the_Bell_System)  
 [2] Marx, Karl. Karl Marx: selected writings.

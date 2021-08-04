@@ -4,7 +4,7 @@ title: About
 permalink: /about/
 ---
 
-<img src="https://i.ibb.co/hDMWn0y/image.png" width="200" height="200" />
+<img src="image.jpg" width="200" height="200" />
 
 I am a third year PhD student at Chalmers University. I work on the [Octopi](https://octopi.chalmers.se) project. 
 

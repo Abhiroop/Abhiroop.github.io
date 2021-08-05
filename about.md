@@ -8,7 +8,7 @@ permalink: /about/
 
 I am a third year PhD student at Chalmers University. I work on the [Octopi](https://octopi.chalmers.se) project. 
 
-Currently, I am contemplating on the role of **time** and **asynchrony** in programming languages, natural languages, music, and the wider physical world. 
+Currently, I am contemplating the role of **time** and **asynchrony** in programming languages, natural languages, music, and the wider physical world. 
 
 My research engages in **structuring asynchrony** into a general language and runtime framework. I conduct my experiments on low-powered, memory-constrained microcontrollers running embedded and IoT applications.
 

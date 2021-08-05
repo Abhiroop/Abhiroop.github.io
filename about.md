@@ -25,7 +25,7 @@ Topic-wise I am broadly interested in the following in no particular order :
 [You can contact me here.](mailto:sarkara@chalmers.se)
 <!-- I majorly program in Haskell and C. I hacked on the Glasgow Haskell Compiler (GHC) to add support for vector instruction for my Masters. In a past life, I used to be a JVM aficionado and ended up knowing some dark secrets about the JLS and the JVM GC mechanisms.  -->
 
-### Quotes that drives my research:
+### Quotes that drive my research:
 
 > "The price of reliability is the pursuit of the utmost simplicity.   
 > It is a price which the very rich may find hard to pay." ~ Tony Hoare

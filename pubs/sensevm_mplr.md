@@ -11,3 +11,5 @@ We address this challenge by introducing SenseVM - a bytecode- interpreted virtu
 Our VM is made portable via a low-level bridge interface, built atop the embedded OS - Zephyr. The bridge is implemented by all drivers and designed such that programming in response to a software message or a hardware interrupt remains uniform and indistinguishable. In this paper we demonstrate the features of our VM through an example, written in a Caml-like functional language, running on the nRF52840 and STM32F4 microcontrollers.
 
 [Paper at MPLR 2021](https://abhiroop.github.io/pubs/sensevm_mplr.pdf)
+
+[Arxiv link](https://arxiv.org/abs/2108.07805)

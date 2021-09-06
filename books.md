@@ -1,5 +1,6 @@
 After nearly a 15 years hiatus, I have once again (Thanks to the pandemic) picked up my old hobby of reading! I decided to write my reviews, which will highlight what I immediately felt after completing that book, on Goodreads. For you, weary wanderer of the Internet realm, here are my reviews (latest first):
 
+- [Siddhartha - Herman Hesse](https://www.goodreads.com/review/show/4088620464)
 - [The Master and Margarita - Mikhail Bulgakov](https://www.goodreads.com/review/show/4051914586)
 - [The Conquest of Happiness - Bertrand Russell](https://www.goodreads.com/review/show/3881281303)
 - [Plato and the Nerd: The Creative Partnership of Humans and Technology - Edward A. Lee](https://www.goodreads.com/review/show/3800900290)

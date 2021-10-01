@@ -6,6 +6,7 @@ permalink: /presentations/
 
 Following are a list of some of the presentations that I have made over the years:
 
+- Higher-Order Concurrency for Microcontrollers [Slides](ttps://abhiroop.github.io/slides/HigherOrderConcurrencyMPLR.pptx)
 - Structuring Asynchrony [Slides](https://abhiroop.github.io/slides/StructuringAsynchrony.pptx)
 - Hailstorm : A Functional Language for IoT Applications [Video](https://www.youtube.com/watch?v=hU-25Vup3PQ) [Slides](https://abhiroop.github.io/slides/Hailstorm_PPDP.pptx)
 - Vectorization in GHC [Video](https://skillsmatter.com/skillscasts/12300-vectorization-in-haskell) [Slides](https://abhiroop.github.io/mastersthesis.html#/)

@@ -25,11 +25,11 @@ Part 2 comprises two papers that describe the design and implementation of a vir
 
 #### Papers
 
-##### Part 1. A native language.
+##### Part 1. A Domain-specific Language.
 
 - [Hailstorm : A Statically-Typed, Purely Functional Language for IoT Applications](https://abhiroop.github.io/pubs/hailstorm/) - PPDP 2020 - [DOI](https://dl.acm.org/doi/10.1145/3414080.3414092)
 
-##### Part 2. A virtual machine.
+##### Part 2. A Virtual Machine.
 
 - [Higher-Order Concurrency for Microcontrollers](https://abhiroop.github.io/pubs/sensevm_mplr) - MPLR 2021 - [DOI](https://dl.acm.org/doi/10.1145/3475738.3480716)
 - [Programming Embedded Systems with SenseVM](https://raw.githubusercontent.com/Abhiroop/Abhiroop.github.io/master/pubs/SenseVM_ECOOP.pdf) (Under review)

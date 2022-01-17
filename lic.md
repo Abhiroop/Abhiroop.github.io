@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Functional Programming for Embedded Systems
-permalink: /about/
+permalink: /lic/
 ---
 
 

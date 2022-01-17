@@ -1,4 +1,4 @@
-### Title : Functional Programming for Embedded Systems
+### Functional Programming for Embedded Systems
 
 #### Abstract
 

@@ -1,4 +1,9 @@
-### Functional Programming for Embedded Systems
+---
+layout: page
+title: Functional Programming for Embedded Systems
+permalink: /about/
+---
+
 
 #### Abstract
 

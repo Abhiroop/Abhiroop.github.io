@@ -14,7 +14,7 @@ I am a fourth-year PhD student at Chalmers University. I work on the [Octopi](ht
 
 My work concerns embedded systems and their security. I am currently the lead designer of the [SenseVM project](https://github.com/svenssonjoel/Sense-VM). 
 
-Topic-wise I am broadly interested in the following in no particular order :
+Topic-wise, I am broadly interested in the following in no particular order :
 
 - Compilers
 - Virtual Machines

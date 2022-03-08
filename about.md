@@ -22,7 +22,7 @@ Topic-wise, I am broadly interested in the following in no particular order :
 - Computer Architecture
 - Memory Management
 
-I sporadically read about philosophy. I often contemplate the role of time and asynchrony in programming languages, natural languages, music, and the wider physical world. You can find my occasional [book reviews on Goodreads](https://abhiroop.github.io/books/).
+I sporadically read about philosophy. I often contemplate the role of *time* and *asynchrony* in programming languages, natural languages, music, and the wider physical world. You can find my occasional [book reviews on Goodreads](https://abhiroop.github.io/books/).
 
 [Contact me here.](mailto:sarkara@chalmers.se)
 <!-- I majorly program in Haskell and C. I hacked on the Glasgow Haskell Compiler (GHC) to add support for vector instruction for my Masters. In a past life, I used to be a JVM aficionado and ended up knowing some dark secrets about the JLS and the JVM GC mechanisms.  -->

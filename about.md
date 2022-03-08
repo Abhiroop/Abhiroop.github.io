@@ -14,8 +14,6 @@ I am a fourth-year PhD student at Chalmers University. I work on the [Octopi](ht
 
 My work concerns embedded systems and their security. I am currently the lead designer of the [SenseVM project](https://github.com/svenssonjoel/Sense-VM). 
 
-I sporadically read about philosophy. I often contemplate the role of time and asynchrony in programming languages, natural languages, music, and the wider physical world.
-
 Topic-wise I am broadly interested in the following in no particular order :
 
 - Compilers
@@ -24,7 +22,7 @@ Topic-wise I am broadly interested in the following in no particular order :
 - Computer Architecture
 - Memory Management
 
-I occasionally [reviews books on Goodreads](https://abhiroop.github.io/books/).
+I sporadically read about philosophy. I often contemplate the role of time and asynchrony in programming languages, natural languages, music, and the wider physical world. I occasionally [reviews books on Goodreads](https://abhiroop.github.io/books/).
 
 [You can contact me here.](mailto:sarkara@chalmers.se)
 <!-- I majorly program in Haskell and C. I hacked on the Glasgow Haskell Compiler (GHC) to add support for vector instruction for my Masters. In a past life, I used to be a JVM aficionado and ended up knowing some dark secrets about the JLS and the JVM GC mechanisms.  -->

@@ -7,17 +7,17 @@ permalink: /lic/
 
 #### Abstract
 
-Embedded Systems application development has been traditionally carried out in low-level machine-oriented programming languages like C or Assembler that can result in unsafe, error-prone and difficult-to-maintain code. Functional programming with features such as higher-order functions, algebraic data types, polymorphism, strong static typing and automatic memory management seems to be a suitable candidate to address the issues with low-level languages and simplifying embedded-systems programming.
+Embedded Systems application development has been traditionally carried out in low-level machine-oriented programming languages like C or Assembler that can result in unsafe, error-prone and difficult-to-maintain code. 
+%Several reported security vulnerabilities in embedded applications are results of memory leaks and out-of-bound memory accesses permitted by low-level languages.
+Functional programming with features such as higher-order functions, algebraic data types, polymorphism, strong static typing and automatic memory management seems to be a suitable candidate to address the issues with low-level languages and simplifying embedded-systems programming. 
 
-However, embedded systems usually run on heavily memory-constrained devices with memory in the order of hundreds of kilobytes and applications running on such devices embody the general characteristics of being (i) I/O-bound, (ii) concurrent and (iii) timing-aware.
-Popular functional language compilers and runtimes either do not fare well with such scarce memory resources or do not provide high-level abstractions that address all the three listed characteristics.
+However, embedded systems usually run on heavily memory-constrained devices with memory in the order of hundreds of kilobytes and applications running on such devices embody the general characteristics of being (i) I/O-bound, (ii) concurrent and (iii) timing-aware. Popular functional language compilers and runtimes either do not fare well with such scarce memory resources or do not provide high-level abstractions that address all the three listed characteristics.
 
+This work attempts to address this gap by investigating and proposing high-level abstractions specialised for I/O-bound, concurrent and timing-aware embedded-systems programs. We implement the proposed abstractions on eagerly-evaluated, statically-typed functional languages running natively on microcontrollers. Our contributions are divided into two parts -
 
-This work fills this gap by investigating and proposing high-level abstractions specialised for I/O-bound, concurrent and timing-aware embedded-systems programs. We implement the proposed abstractions on eagerly-evaluated, statically-typed functional languages running natively on microcontrollers. Our contributions are divided into two parts -
+Part 1 presents a functional reactive programming language - Hailstorm - that tracks side effects like I/O in its type system using a feature called resource types. Hailstorm's programming model is illustrated on the GRiSP microcontroller board.
 
-Part 1 presents a functional reactive programming language - Hailstorm - that tracks side effects like I/O in its type system using a feature called *resource types*. The language uses a combination of resource types and Arrowized Functional Reactive Programming (AFRP) operators to write embedded systems programs running on the GRiSP microcontroller board.
-
-Part 2 comprises two papers that describe the design and implementation of a virtual machine (VM) - SenseVM - that can host functional languages while providing support for message-passing based concurrency (inspired from ConcurrentML). It also supports a message-passing based IO interface that translates between low-level interrupt based and memory-mapped peripherals and includes a special operator to express timing behaviours. SenseVM currently hosts a Caml-like functional language and is capable of hosting DSLs like Hailstorm as well. Our evaluation of the SenseVM is carried out on the popular STM32F4 and the NRF52 microcontroller boards. We discuss the interpreter and garbage collection overhead on the response-time and also measure precision and jitter of timed operations on SenseVM.
+Part 2 comprises two papers that describe the design and implementation of Synchron, a runtime API that provides a uniform message-passing framework for the handling of software messages as well as hardware interrupts. Additionally, the Synchron API supports a novel timing operator to capture the notion of time, common in embedded applications. The Synchron API is implemented as a virtual machine - SynchronVM - that is run on the NRF52 and STM32 microcontroller boards. We present programming examples that illustrate the concurrency, I/O and timing capabilities of the VM and provide various benchmarks on the response time, memory and power usage of SynchronVM.
 
 #### Introduction
 

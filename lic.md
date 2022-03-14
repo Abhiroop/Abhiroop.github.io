@@ -21,7 +21,7 @@ Part 2 comprises two papers that describe the design and implementation of Synch
 
 #### Introduction
 
-[TODO]
+[Introduction (Kappa)](https://raw.githubusercontent.com/Abhiroop/Abhiroop.github.io/master/Abhiroop_Lic_Kappa.pdf)
 
 #### Papers
 

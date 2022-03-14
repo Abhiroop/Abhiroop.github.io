@@ -13,6 +13,8 @@ However, embedded systems usually run on heavily memory-constrained devices with
 
 This work attempts to address this gap by investigating and proposing high-level abstractions specialised for I/O-bound, concurrent and timing-aware embedded-systems programs. We implement the proposed abstractions on eagerly-evaluated, statically-typed functional languages running natively on microcontrollers. Our contributions are divided into two parts -
 
+
+
 Part 1 presents a functional reactive programming language - Hailstorm - that tracks side effects like I/O in its type system using a feature called resource types. Hailstorm's programming model is illustrated on the GRiSP microcontroller board.
 
 Part 2 comprises two papers that describe the design and implementation of Synchron, a runtime API that provides a uniform message-passing framework for the handling of software messages as well as hardware interrupts. Additionally, the Synchron API supports a novel timing operator to capture the notion of time, common in embedded applications. The Synchron API is implemented as a virtual machine - SynchronVM - that is run on the NRF52 and STM32 microcontroller boards. We present programming examples that illustrate the concurrency, I/O and timing capabilities of the VM and provide various benchmarks on the response time, memory and power usage of SynchronVM.
@@ -30,4 +32,4 @@ Part 2 comprises two papers that describe the design and implementation of Synch
 ##### Part 2. A Virtual Machine.
 
 - [Higher-Order Concurrency for Microcontrollers](https://abhiroop.github.io/pubs/sensevm_mplr) - MPLR 2021 - [DOI](https://dl.acm.org/doi/10.1145/3475738.3480716)
-- [Programming Embedded Systems with SenseVM](https://raw.githubusercontent.com/Abhiroop/Abhiroop.github.io/master/pubs/SenseVM_ECOOP.pdf) (Under review)
+- [Synchron - An API for Embedded Systems](https://raw.githubusercontent.com/Abhiroop/Abhiroop.github.io/master/pubs/SenseVM_ECOOP.pdf) (Work-in-progress)

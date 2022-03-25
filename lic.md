@@ -4,7 +4,7 @@ title: Functional Programming for Embedded Systems
 permalink: /lic/
 ---
 
-####
+
 
 [Compiled Licentiate](https://raw.githubusercontent.com/Abhiroop/Abhiroop.github.io/master/AbhiroopCompleteLic(MinusAck).pdf)
 

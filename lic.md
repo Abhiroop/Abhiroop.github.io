@@ -32,7 +32,7 @@ Part 2 comprises two papers that describe the design and implementation of Synch
 ##### Part 2. A Virtual Machine.
 
 - [Higher-Order Concurrency for Microcontrollers](https://abhiroop.github.io/pubs/sensevm_mplr) - MPLR 2021 - [DOI](https://dl.acm.org/doi/10.1145/3475738.3480716)
-- [Synchron - An API for Embedded Systems](https://raw.githubusercontent.com/Abhiroop/Abhiroop.github.io/master/pubs/SenseVM_ECOOP.pdf) (Work-in-progress)
+- [Synchron - An API for Embedded Systems](https://raw.githubusercontent.com/Abhiroop/Abhiroop.github.io/master/pubs/ECOOPSYNCHRON.pdf) (Under Review)
 
 ##### Artifacts
 

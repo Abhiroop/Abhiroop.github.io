@@ -6,7 +6,7 @@ permalink: /lic/
 
 
 
-[Compiled Licentiate](https://raw.githubusercontent.com/Abhiroop/Abhiroop.github.io/master/AbhiroopCompleteLic(MinusAck).pdf)
+[Compiled Licentiate](https://raw.githubusercontent.com/Abhiroop/Abhiroop.github.io/master/AbhiroopCompleteLic.pdf)
 
 
 #### Abstract

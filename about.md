@@ -12,14 +12,14 @@ permalink: /about/
 
 I am a fourth-year PhD student at Chalmers University. I work on the [Octopi](https://octopi.chalmers.se) project.
 
-My work concerns embedded systems and their security. I am currently the lead designer of the [SenseVM project](https://github.com/svenssonjoel/Sense-VM). 
+My work concerns embedded systems and their security. I am currently the lead designer of the [SynchronVM project](https://github.com/SynchronVM/SynchronVM). 
 
 Topic-wise, I am broadly interested in the following in no particular order :
 
 - Compilers
 - Virtual Machines
 - Concurrency
-- Computer Architecture
+- Computer Architecture (specifically Microarchitectural Security)
 - Memory Management
 
 I sporadically read about philosophy. I often contemplate the role of *time* and *asynchrony* in programming languages, natural languages, music, and the wider physical world. You can find my occasional [book reviews on Goodreads](https://abhiroop.github.io/books/).

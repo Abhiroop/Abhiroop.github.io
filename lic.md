@@ -40,6 +40,6 @@ Part 2 comprises two papers that describe the design and implementation of Synch
 
 ##### Artifacts
 
-[SynchronVM Repo](https://github.com/svenssonjoel/Sense-VM)
+[SynchronVM Repo](https://github.com/SynchronVM/SynchronVM)
 
 [Artifacts under review](https://chalmersuniversity.app.box.com/s/g1r0jxra1lcd69u5455s3lwjfcx05re1)

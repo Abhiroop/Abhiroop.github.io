@@ -13,4 +13,4 @@ is demonstrated through a music programming exercise. Finally, we provide benchm
 
 [Preprint of paper accepted at ECOOP 2022](https://raw.githubusercontent.com/Abhiroop/Abhiroop.github.io/master/pubs/SynchronECOOPOriginal.pdf)
 
-Arxiv link is being generated.
+[Arxiv link](https://arxiv.org/abs/2205.03262)

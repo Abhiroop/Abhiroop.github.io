@@ -4,6 +4,7 @@ title: Publications
 permalink: /publications/
 ---
 
+- [HasTEE - Confidential Computing on Trusted Execution Environments with Haskell](https://abhiroop.github.io/pubs/HasTEE.pdf) - Under submission, 2023.
 - [Synchron - An API and Runtime for Embedded Systems](https://abhiroop.github.io/pubs/synchron) - ECOOP 2022 - [DOI](https://drops.dagstuhl.de/opus/volltexte/2022/16245/)
 - [Functional Programming for Embedded Systems](https://abhiroop.github.io/lic/) [(Licentiate Thesis)](https://research.chalmers.se/en/publication/529325)
 - [Higher-Order Concurrency for Microcontrollers](https://abhiroop.github.io/pubs/sensevm_mplr) - MPLR 2021 - [DOI](https://dl.acm.org/doi/10.1145/3475738.3480716)

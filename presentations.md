@@ -6,7 +6,7 @@ permalink: /presentations/
 
 Following is a list of some of the presentations that I have made over the years:
 
-- HasTEE - Programming Trusted Execution Environments with Haskell [Slides](https://abhiroop.github.io/slides/HasTEE_Haskell_Symposium_2023.pdf)
+- HasTEE - Programming Trusted Execution Environments with Haskell [Video](https://www.youtube.com/watch?v=q-VW1pp1nGk) [Slides](https://abhiroop.github.io/slides/HasTEE_Haskell_Symposium_2023.pdf)
 - Confidential Computing with Haskell [Slides](https://abhiroop.github.io/slides/Abhi_CHERITech23.pdf) at [CHERITech '23](https://www.dcs.gla.ac.uk/~jsinger/cheritech23.html)
 - Functional Programming for Embedded Systems (Licentiate) [Slides](https://chalmersuniversity.box.com/s/idaan5dkn9hlva1ep21the977bmfn916)
 - Higher-Order Concurrency for Microcontrollers [Video](https://youtu.be/UKs2PiY3n54) [Slides](https://abhiroop.github.io/slides/HigherOrderConcurrencyMPLR.pptx)

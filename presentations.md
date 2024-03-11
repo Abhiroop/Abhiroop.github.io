@@ -6,6 +6,8 @@ permalink: /presentations/
 
 Following is a list of some of the presentations that I have made over the years:
 
+- HasTEE+ - Confidential Computing with Haskell [Slides](https://abhiroop.github.io/slides/HasTEE_UC_SantaCruz.pdf) presented at the [LSD Seminar](https://lsd.ucsc.edu/lsd-seminar/2024wi/#march-8) at University of California, Santa Cruz
+- HasTEE - Confidential Computing with Haskell [Slides](https://abhiroop.github.io/slides/HasTEE_ETH_Zurich.pdf) presented at ETH Zurich
 - HasTEE - Programming Trusted Execution Environments with Haskell [Video](https://www.youtube.com/watch?v=q-VW1pp1nGk) [Slides](https://abhiroop.github.io/slides/HasTEE_Haskell_Symposium_2023.pdf)
 - Confidential Computing with Haskell [Slides](https://abhiroop.github.io/slides/Abhi_CHERITech23.pdf) at [CHERITech '23](https://www.dcs.gla.ac.uk/~jsinger/cheritech23.html)
 - Functional Programming for Embedded Systems (Licentiate) [Slides](https://chalmersuniversity.box.com/s/idaan5dkn9hlva1ep21the977bmfn916)

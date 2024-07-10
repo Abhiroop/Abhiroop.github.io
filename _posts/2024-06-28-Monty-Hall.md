@@ -20,7 +20,7 @@ calculate or question my intuition on why the contestant should switch. However,
 [Paul Erdős](https://en.wikipedia.org/wiki/Paul_Erd%C5%91s), were stumped by the answer to the problem. Erdős was convinced of the solution only after he witnessed simulations rather than a proof or calculation!
 
 So, I decided to reuse my ninth-standard probability lessons of Bayes Theorem to craft a solution. I have not at this point read through any solution, except the one that Pinker provides in his book.
-Pinker's solution is quite different and uses a gameplay simulation and informal intuitions to drive home the result (and I think his explanation works). The Goodreads reviews particularly point out that and 
+Pinker's solution (I am sure this particular solution was not Pinker's proposal but his explanation of a known solution) is quite different and uses a gameplay simulation and informal intuitions to drive home the result (and I think his explanation works). The Goodreads reviews particularly point out that and 
 appreciate Pinker's lucid and intuitive explanation. If you are interested in reading more about his solution, I encourage you to purchase the [book.](https://stevenpinker.com/publications/rationality-what-it-why-it-seems-so-scarce-and-why-it-matters)
 However, I will use an established result of the Bayes theorem of conditional probability, which states:
 
@@ -79,4 +79,4 @@ P(car in 2|my choice 1, monty opened 3) =  ---
 Equivalently, we can calculate the probability of the car being behind Door 1 as simply `1 - 2/3 = 1/3`. Hence, **the contestant should switch**, as they have a 66.67% probability of the car being behind Door 2.
 
 Given that Steven Pinker's book is about *thinking styles*, I realised that I tend to think about most problems quite *mechanically*. I observed this pattern while solving the other puzzles in the book, where I typically try to abstract the problem into a logical/math domain and apply established/known results to answer the question, rather than using physical intuition.
-Most people would refer to this style as *dry* and *procedural*, as opposed to Pinker's *lucid* and *intuitive* style, but I believe sometimes there is merit in dryness.
+Quiet often this style is described as *dry* and *procedural*, as opposed to Pinker's *lucid* and *intuitive* style, but there is sometimes merit in dryness.

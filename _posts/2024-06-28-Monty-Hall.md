@@ -78,5 +78,7 @@ P(car in 2|my choice 1, monty opened 3) =  ---
 
 Equivalently, we can calculate the probability of the car being behind Door 1 as simply `1 - 2/3 = 1/3`. Hence, **the contestant should switch**, as they have a 66.67% probability of the car being behind Door 2.
 
-Given that Steven Pinker's book is about *thinking styles*, I realised that I tend to think about most problems quite *mechanically*. I observed this pattern while solving the other puzzles in the book, where I typically try to abstract the problem into a logical/math domain and apply established/known results to answer the question, rather than using physical intuition.
+Given that Steven Pinker's book is about *thinking styles*, I realised that I attempt to approach most problems quite *mechanically*. I observed this pattern while solving the other puzzles in the book, where I typically try to abstract the problem into a logical/math domain and apply established/known results to answer the question, rather than using physical intuition.
 Quiet often this style is described as *dry* and *procedural*, as opposed to Pinker's *lucid* and *intuitive* style, but there is sometimes merit in dryness.
+
+> Mathematics is a game played according to certain simple rules with meaningless marks on paper - David Hilbert

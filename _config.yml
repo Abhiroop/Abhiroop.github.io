@@ -62,7 +62,7 @@ version: v1.2.0
 
 
 #### Markdown Processors
-markdown: redcarpet
+markdown: kramdown
 redcarpet:
   extensions:
     - superscript

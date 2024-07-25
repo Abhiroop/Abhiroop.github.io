@@ -41,34 +41,6 @@ the contestant if they want to switch. Let me draw the scenario at this point
 The `C` on Door 1 marks that the contestant chooses the door and the `M` on Door 3 marks that Monty Hall opened it to reveal a goat. 
 The contestant now needs to maximise their probability of winning a car. Should they stick with Door 1 or switch to Door 2? In effect, they need to calculate:
 
-\begin{equation}
-(A)'_{i,j} = A_{j,i}
-\end{equation}
-
-{::nomarkdown}  
-\begin{equation}
-(A)'_{i,j} = A_{j,i}
-\end{equation}
-{:/} 
-
-$$
-\begin{aligned}
-  & \phi(x,y) = \phi \left(\sum_{i=1}^n x_ie_i, \sum_{j=1}^n y_je_j \right)
-  = \sum_{i=1}^n \sum_{j=1}^n x_i y_j \phi(e_i, e_j) = \\
-  & (x_1, \ldots, x_n) \left( \begin{array}{ccc}
-      \phi(e_1, e_1) & \cdots & \phi(e_1, e_n) \\
-      \vdots & \ddots & \vdots \\
-      \phi(e_n, e_1) & \cdots & \phi(e_n, e_n)
-    \end{array} \right)
-  \left( \begin{array}{c}
-      y_1 \\
-      \vdots \\
-      y_n
-    \end{array} \right)
-\end{aligned}
-$$
-
-
 
 $$ Pr(car\ in\ 2|my\ choice\ 1,\ monty\ opened\ 3) =  \frac{Pr(my\ choice\ 1,\ monty\ opened\ 3|car\ in\ 2) . Pr (car\ in\ 2)}{Pr(my\ choice\ 1,\ monty\ opened\ 3)} $$
 

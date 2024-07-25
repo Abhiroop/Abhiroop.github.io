@@ -4,8 +4,7 @@ title: Solving Monty Hall with the List monad (or Probabilistic Programming)
 ---
 
 Continuing from my [Bayes Theorem-based blog post](https://abhiroop.github.io/Monty-Hall/) on solving the Monty-Hall problem, I will now show a rather elegant way to model the solution that exploits
-the humble List monad. The goal is to help the contestant answer the question:*should I switch my choice?*, when the contestant has already chosen a door, Monty Halls opens a different door and
-asks the question. This post was inspired by a [less-than 100 lines implementation of a probabilistic programming monad](https://dennybritz.com/posts/probability-monads-from-scratch/) in Haskell 
+the humble List monad. To remind the reader, the Monty Hall problem involves a contestant initially choosing one of three doors, hoping to find a car behind it. Monty Hall then opens a different door, revealing a goat, and asks the contestant *if they want to switch their initial choice*. The goal of the solution is to guide the contestants to make this switching choice such that they have a higher probability of winning. This post was inspired by a [less-than 100 lines implementation of a probabilistic programming monad](https://dennybritz.com/posts/probability-monads-from-scratch/) in Haskell 
 
 We will begin by representing discrete distributions as a Haskell datatype:
 

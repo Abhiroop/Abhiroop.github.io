@@ -4,8 +4,8 @@ title: Solving Monty Hall with the List monad (or Probabilistic Programming)
 ---
 
 Continuing from my [Bayes Theorem-based blog post](https://abhiroop.github.io/Monty-Hall/) on solving the Monty-Hall problem, I will now show a rather elegant way to model the solution that exploits
-the humble List monad. The goal is to help the contestant answer the question:*should I switch my choice?*, when the contestant has already chosen a door, followed by Monty Halls opening a different door and 
-asking the question. This post was inspired by a [less-than 100 lines implementation of a probabilistic programming monad](https://dennybritz.com/posts/probability-monads-from-scratch/) in Haskell 
+the humble List monad. The goal is to help the contestant answer the question:*should I switch my choice?*, when the contestant has already chosen a door, Monty Halls opens a different door and
+asks the question. This post was inspired by a [less-than 100 lines implementation of a probabilistic programming monad](https://dennybritz.com/posts/probability-monads-from-scratch/) in Haskell 
 
 We will begin by representing discrete distributions as a Haskell datatype:
 
@@ -15,11 +15,10 @@ type Prob = Double -- probability of an outcome
 newtype Dist a = Dist { unpackDist :: [(a, Prob)] }
 ```
 
-This is a nicer reformulation of distributions that could be simply modelled by the List monad. For example, in an experiment with 5 tosses (modelled as `data Toss = Head | Tail`), that leads to 
-4 Heads and 1 Tail, our `Dist` type will model this as `Dist [(Head, 0.8), (Tail, 0.2)]`. However, we could have simply modelled this as a plain list as `[Head, Head, Head, Head, Tail]`. It is simply the
-`Dist` type is nicer to work with (but it is simply a wrapper on the plain `List`).
+This is a nicer reformulation of distributions that the List monad could simply model. For example, in an experiment with 5 tosses (modelled as `data Toss = Head | Tail`), that leads to 
+4 Heads and 1 Tail, our `Dist` type will model this as `Dist [(Head, 0.8), (Tail, 0.2)]`. However, we could have simply modelled this as a plain list as `[Head, Head, Head, Head, Tail]`. It is simply that the `Dist` type is nicer to work with (but it is simply a wrapper on the plain `List`).
 
-Next, to compute probabilities accurately, its easier for our representation if we normalise the distribution, we can simply do that using:
+Next, to compute probabilities accurately, it is easier for our representation if we normalise the distribution, we can simply do that using:
 
 ```Haskell
 normP :: [(a, Prob)] -> [(a, Prob)]
@@ -44,7 +43,7 @@ presented in this [blog post](https://dennybritz.com/posts/probability-monads-fr
 
 #### Monad instance 
 
-The most important bit for modeling Monty Hall is the Monad instance of `Dist`. We will use the Monad instance to model conditional discrete distribution. Given two discrete random variables `X` and `Y`,
+The Monad instance of `Dist` is the most important bit for modelling Monty Hall. We will use the Monad instance to model conditional discrete distribution. Given two discrete random variables `X` and `Y`,
 we can compute their joint distribution (given that they are not mutually independent) as follows:
 
 $$ Pr({X = x} \cap {Y = y}) = Pr(X = x | Y = y) . Pr (Y = y)$$
@@ -58,7 +57,7 @@ instance Monad Dist where
     (y, p') <- unpackDist (f x)
     return (y, p * p')
 ```
-The `p * p'` is multiplying the probabilities of the two outcomes. The `join` function of the Monad instance can allow us consider an alternate view of the above. Considering a *distribution of distributions* (please don't try to visualise),
+The `p * p'` is multiplying the probabilities of the two outcomes. The `join` function of the Monad instance can allow us to consider an alternate view of the above. Considering a *distribution of distributions* (please don't try to visualise),
 we want to flatten it into a single distribution as follows:
 
 ```Haskell
@@ -77,12 +76,12 @@ Armed with this very small set of combinators above, we now model the Monty Hall
 data Outcome = Win | Loss deriving (Show, Eq, Ord)
 ```
 
-And now, lets intuitively specify the switching strategy : *If our first choice is the winning door*, followed by which Monty Hall opens a door that contains a goat, 
+And now, let's intuitively specify the switching strategy : *If our first choice is the winning door*, followed by which Monty Hall opens a door that contains a goat, 
 *if we switch, then we will certainly lose*. That is because we already selected the winning door, and the switch will cost us the victory. However, *if our first choice is the losing door*,
-followed by which Monty Hall opens the door containing a goat, *if we switch, then we certainly win*. Because, we chose the losing door, Monty Hall opened the other losing door and the
+followed by Monty Hall opening the door containing a goat, *if we switch, then we certainly win*. Because we chose the losing door, Monty Hall opened the other losing door and the
 remaining door certainly assures our victory.
 
-In the specification above we used the language of *certain victory* or *certain loss*, so we need to model certainty. And that is simply modeled as:
+In the specification above we used the language of *certain victory* or *certain loss*, so we need to model certainty. And that is simply modelled as:
 
 ```Haskell
 certainly :: a -> Dist a
@@ -108,7 +107,7 @@ The comment `{- switching will -}` is simply added such that the specification a
 Loss | 0.3333
 ```
 
-This shows us that switching our choice will allow us to win 66% of times, while losing 33% of times. Given the first choice has the following distributions:
+This shows us that switching our choice will allow us to win 66% of the time while losing 33% of the time. The first choice has the following distributions:
 
 ```Haskell
 > uniform [Win, Loss, Loss]

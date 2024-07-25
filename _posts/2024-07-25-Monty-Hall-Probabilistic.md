@@ -140,5 +140,5 @@ Loss | 0.3333
 
 Hence, the contestant should switch!
 
-Source code for the above available at :
+Source code for the above available at : [Abhiroop/bayes](https://github.com/Abhiroop/bayes)
 

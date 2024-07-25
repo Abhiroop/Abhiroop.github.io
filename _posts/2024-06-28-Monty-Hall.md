@@ -41,9 +41,18 @@ the contestant if they want to switch. Let me draw the scenario at this point
 The `C` on Door 1 marks that the contestant chooses the door and the `M` on Door 3 marks that Monty Hall opened it to reveal a goat. 
 The contestant now needs to maximise their probability of winning a car. Should they stick with Door 1 or switch to Door 2? In effect, they need to calculate:
 
-{::nomarkdown} 
-$$ Pr(car\ in\ 2|my\ choice\ 1,\ monty\ opened\ 3) =  \frac{Pr(my\ choice\ 1,\ monty\ opened\ 3|car\ in\ 2) . Pr (car\ in\ 2)}{Pr(my\ choice\ 1,\ monty\ opened\ 3)} $$
+\begin{equation}
+(A)'_{i,j} = A_{j,i}
+\end{equation}
+
+{::nomarkdown}  
+\begin{equation}
+(A)'_{i,j} = A_{j,i}
+\end{equation}
 {:/} 
+
+
+$$ Pr(car\ in\ 2|my\ choice\ 1,\ monty\ opened\ 3) =  \frac{Pr(my\ choice\ 1,\ monty\ opened\ 3|car\ in\ 2) . Pr (car\ in\ 2)}{Pr(my\ choice\ 1,\ monty\ opened\ 3)} $$
 
 Let's calculate the probabilities on the right side. `Pr(car in 2)` is the simplest one. Given that it is not constrained by any conditions, the probability that the car is in one of the three doors (in this case door 2) is simply `1/3`
 

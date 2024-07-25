@@ -24,11 +24,8 @@ Pinker's solution (I am sure this particular solution was not Pinker's proposal 
 appreciate Pinker's lucid and intuitive explanation. If you are interested in reading more about his solution, I encourage you to purchase the [book.](https://stevenpinker.com/publications/rationality-what-it-why-it-seems-so-scarce-and-why-it-matters)
 However, I will use an established result of the Bayes theorem of conditional probability, which states:
 
-```
-         P(B|A) . P(A)
-P(A|B) = -------------
-              P(B)
-```
+$$ Pr(A|B) =  \frac{Pr(B|A) . Pr (A)}{Pr(B)} $$
+
 
 I have written enough PL papers that I am itching to start explaining the notation and domains, but it is 3:25 am and I am hoping that the reader can follow along with a basic ninth standard notation. If not, please jump to the wiki article on [Bayes Theorem](https://en.wikipedia.org/wiki/Bayes%27_theorem).
 
@@ -44,37 +41,27 @@ the contestant if they want to switch. Let me draw the scenario at this point
 The `C` on Door 1 marks that the contestant chooses the door and the `M` on Door 3 marks that Monty Hall opened it to reveal a goat. 
 The contestant now needs to maximise their probability of winning a car. Should they stick with Door 1 or switch to Door 2? In effect, they need to calculate:
 
-```
-                                            P(my choice 1, monty opened 3|car in 2) . P(car in 2)
-P(car in 2|my choice 1, monty opened 3) =  -----------------------------------------------------
-                                                        P(my choice 1, monty opened 3)
-```
-Let's calculate the probabilities on the right side. `P(car in 2)` is the simplest one. Given that it is not constrained by any conditions, the probability that the car is in one of the three doors (in this case door 2) is simply `1/3`
+$$ Pr(car\ in\ 2|my\ choice\ 1,\ monty\ opened\ 3) =  \frac{Pr(my\ choice\ 1,\ monty\ opened\ 3|car\ in\ 2) . Pr (car\ in\ 2)}{Pr(my\ choice\ 1,\ monty\ opened\ 3)} $$
 
-Next, `P(my choice 1, monty opened 3|car in 2)`. This one is interesting. Given that the car is in door 2, what is the probability that Monty Hall opened door 3, while the contestant chose door 1? This
+Let's calculate the probabilities on the right side. `Pr(car in 2)` is the simplest one. Given that it is not constrained by any conditions, the probability that the car is in one of the three doors (in this case door 2) is simply `1/3`
+
+Next, `Pr(my choice 1, monty opened 3|car in 2)`. This one is interesting. Given that the car is in door 2, what is the probability that Monty Hall opened door 3, while the contestant chose door 1? This
 one is interesting because the problem statement makes certain assumptions - (1) *Monty Hall actually knows where the car is*, (2) *Monty Hall wants the show to last at least two rounds*. Holding assumption 2, Monty Hall will intentionally open a door with a goat such that the show can progress to the next round. Given that, in our conditional probability scenario, Monty can never open door 2, because the car will be revealed (remember assumption 1 that Monty knows where the car is) and the show won't progress to the next round. Similarly, Monty Hall can never open door 1, because the contestant has already made door 1 their choice. If door 1 houses a goat or a car, in both cases assumption 2 is invalidated and the show abruptly ends.
-Hence, the only choice that Monty Hall has is to open Door 3. So, the overall conditional probability `P(my choice 1, monty opened 3|car in 2)` is in fact `1`! Door 3 is the only choice Monty Hall has.
+Hence, the only choice that Monty Hall has is to open Door 3. So, the overall conditional probability `Pr(my choice 1, monty opened 3|car in 2)` is in fact `1`! Door 3 is the only choice Monty Hall has.
 
-Finally, `P(my choice 1, monty opened 3)`. This is a weaker version of the previous probability, where the condition `car in 2` is no longer in place. So, now Monty Hall cannot open door 1 because the
+Finally, `Pr(my choice 1, monty opened 3)`. This is a weaker version of the previous probability, where the condition `car in 2` is no longer in place. So, now Monty Hall cannot open door 1 because the
 contestant has already chosen door 1 and opening door 1 will abruptly end the show (as explained earlier). Now, the probability of Monty opening door 3 is 50% or `1/2` because the constraint of the car is gone, and
 Monty Hall needs to choose 1 out of 2 doors (Doors 2 and 3).
 
 With the above, we will have:
 
-```
-                                            P(my choice 1, monty opened 3|car in 2) . P(car in 2)
-P(car in 2|my choice 1, monty opened 3) =  -----------------------------------------------------
-                                                        P(my choice 1, monty opened 3)
+$$ Pr(car\ in\ 2|my\ choice\ 1,\ monty\ opened\ 3) =  \frac{Pr(my\ choice\ 1,\ monty\ opened\ 3|car\ in\ 2) . Pr (car\ in\ 2)}{Pr(my\ choice\ 1,\ monty\ opened\ 3)} $$
 
-                                            1 . 1/3
-P(car in 2|my choice 1, monty opened 3) =  ---------
-                                              1/2
+$$ Pr(car\ in\ 2|my\ choice\ 1,\ monty\ opened\ 3) =  \frac{1 . \frac{1}{3}}{\frac{1}{2}} $$
 
-                                            2
-P(car in 2|my choice 1, monty opened 3) =  ---
-                                            3
+$$ Pr(car\ in\ 2|my\ choice\ 1,\ monty\ opened\ 3) =  \frac{2}{3} $$
 
-```
+
 
 Equivalently, we can calculate the probability of the car being behind Door 1 as simply `1 - 2/3 = 1/3`. Hence, **the contestant should switch**, as they have a 66.67% probability of the car being behind Door 2.
 

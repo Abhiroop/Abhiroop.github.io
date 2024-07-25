@@ -9,7 +9,7 @@ asks the question. This post was inspired by a [less-than 100 lines implementati
 
 We will begin by representing discrete distributions as a Haskell datatype:
 
-```Haskell
+```haskell
 type Prob = Double -- probability of an outcome
 
 newtype Dist a = Dist { unpackDist :: [(a, Prob)] }
@@ -18,9 +18,9 @@ newtype Dist a = Dist { unpackDist :: [(a, Prob)] }
 This is a nicer reformulation of distributions that the List monad could simply model. For example, in an experiment with 5 tosses (modelled as `data Toss = Head | Tail`), that leads to 
 4 Heads and 1 Tail, our `Dist` type will model this as `Dist [(Head, 0.8), (Tail, 0.2)]`. However, we could have simply modelled this as a plain list as `[Head, Head, Head, Head, Tail]`. It is simply that the `Dist` type is nicer to work with (but it is simply a wrapper on the plain `List`).
 
-Next, to compute probabilities accurately, it is easier for our representation if we normalise the distribution, we can simply do that using:
+Next, to compute probabilities accurately, it is easier for our representation if we normalise the distribution. We can simply do that using:
 
-```Haskell
+```haskell
 normP :: [(a, Prob)] -> [(a, Prob)]
 normP xs = map (\(x, y) -> (x, y / (sumP xs))) xs
   where
@@ -30,7 +30,7 @@ normP xs = map (\(x, y) -> (x, y / (sumP xs))) xs
 
 Given the above, we can now define the uniform distribution:
 
-```Haskell
+```haskell
 uniform :: [a] -> Dist a
 uniform = Dist . normP . map (, 1.0)
 
@@ -50,7 +50,7 @@ $$ Pr({X = x} \cap {Y = y}) = Pr(X = x | Y = y) . Pr (Y = y)$$
 
 We can convert this idea to the Monad instance quite naturally:
 
-```Haskell
+```haskell
 instance Monad Dist where
   (Dist xs) >>= f = Dist $ do
     (x, p)  <- xs
@@ -60,7 +60,7 @@ instance Monad Dist where
 The `p * p'` is multiplying the probabilities of the two outcomes. The `join` function of the Monad instance can allow us to consider an alternate view of the above. Considering a *distribution of distributions* (please don't try to visualise),
 we want to flatten it into a single distribution as follows:
 
-```Haskell
+```haskell
 join :: Dist (Dist a) -> Dist a
 join (Dist dist) = Dist $ do -- dist  :: [(Dist a, Prob)]
   (Dist dista, prob) <- dist -- dista :: [(a, Prob)]
@@ -72,7 +72,7 @@ join (Dist dist) = Dist $ do -- dist  :: [(Dist a, Prob)]
 
 Armed with this very small set of combinators above, we now model the Monty Hall problem. We start by defining the outcome type:
 
-```Haskell
+```haskell
 data Outcome = Win | Loss deriving (Show, Eq, Ord)
 ```
 
@@ -83,14 +83,14 @@ remaining door certainly assures our victory.
 
 In the specification above we used the language of *certain victory* or *certain loss*, so we need to model certainty. And that is simply modelled as:
 
-```Haskell
+```haskell
 certainly :: a -> Dist a
 certainly a = Dist [(a, 1.0)]
 ```
 
-So, basically one outcome that has the probability of 1.0. And, with that we can easily translate the English specification above, to the Haskell snippet below:
+So, one outcome that has a probability of 1.0. And, with that, we can easily translate the English specification above, to the Haskell snippet below:
 
-```Haskell
+```haskell
 switching :: Dist Outcome
 switching = do
   firstChoice <- uniform [Win,Loss,Loss]
@@ -101,7 +101,7 @@ switching = do
 
 The comment `{- switching will -}` is simply added such that the specification almost translates to *literal* English. Now, we can observe the distributions:
 
-```Haskell
+```haskell
 > switching
  Win | 0.6667
 Loss | 0.3333
@@ -109,7 +109,7 @@ Loss | 0.3333
 
 This shows us that switching our choice will allow us to win 66% of the time while losing 33% of the time. The first choice has the following distributions:
 
-```Haskell
+```haskell
 > uniform [Win, Loss, Loss]
  Win | 0.3333
 Loss | 0.3333
@@ -118,7 +118,7 @@ Loss | 0.3333
 
 Our computation proceeds by certainly losing if we switch after winning the first round, while certainly winning if we switch after losing the first round. Hence the calculation proceeds as:
 
-```Haskell
+```haskell
  Win ~> certainly Loss| 0.3333 * 1.0
 Loss ~> certainly Win | 0.3333 * 1.0
 Loss ~> certainly Win | 0.3333 * 1.0

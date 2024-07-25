@@ -15,10 +15,10 @@ type Prob = Double -- probability of an outcome
 newtype Dist a = Dist { unpackDist :: [(a, Prob)] }
 ```
 
-This is a nicer reformulation of distributions that the List monad could simply model. For example, in an experiment with 5 tosses (modelled as `data Toss = Head | Tail`), that leads to 
-4 Heads and 1 Tail, our `Dist` type will model this as `Dist [(Head, 0.8), (Tail, 0.2)]`. However, we could have simply modelled this as a plain list as `[Head, Head, Head, Head, Tail]`. It is simply that the `Dist` type is nicer to work with (but it is simply a wrapper on the plain `List`).
+This is a nicer reformulation of distributions that the List monad could naturally model. For example, in an experiment with 5 tosses (modelled as `data Toss = Head | Tail`), that leads to 
+4 Heads and 1 Tail, our `Dist` type will model this as `Dist [(Head, 0.8), (Tail, 0.2)]`. However, we could have modelled this as a plain list as `[Head, Head, Head, Head, Tail]`. It is simply that the `Dist` type is nicer to work with (but it is a wrapper on the plain `List`).
 
-Next, to compute probabilities accurately, it is easier for our representation if we normalise the distribution. We can simply do that using:
+Next, to compute probabilities accurately, it is easier for our representation if we normalise the distribution. We can do that using:
 
 ```haskell
 normP :: [(a, Prob)] -> [(a, Prob)]
@@ -43,7 +43,7 @@ presented in this [blog post](https://dennybritz.com/posts/probability-monads-fr
 
 #### Monad instance 
 
-The Monad instance of `Dist` is the most important bit for modelling Monty Hall. We will use the Monad instance to model conditional discrete distribution. Given two discrete random variables `X` and `Y`,
+The Monad instance of `Dist` is the most important construct for modelling Monty Hall. We will use the Monad instance to model conditional discrete distribution. Given two discrete random variables `X` and `Y`,
 we can compute their joint distribution (given that they are not mutually independent) as follows:
 
 $$ Pr({X = x} \cap {Y = y}) = Pr(X = x | Y = y) . Pr (Y = y)$$
@@ -70,7 +70,7 @@ join (Dist dist) = Dist $ do -- dist  :: [(Dist a, Prob)]
 
 #### Monty Hall
 
-Armed with this very small set of combinators above, we now model the Monty Hall problem. We start by defining the outcome type:
+Armed with this small set of combinators above, we now model the Monty Hall problem. We start by defining the outcome type:
 
 ```haskell
 data Outcome = Win | Loss deriving (Show, Eq, Ord)
@@ -81,7 +81,7 @@ And now, let's intuitively specify the switching strategy : *If our first choice
 followed by Monty Hall opening the door containing a goat, *if we switch, then we certainly win*. Because we chose the losing door, Monty Hall opened the other losing door and the
 remaining door certainly assures our victory.
 
-In the specification above we used the language of *certain victory* or *certain loss*, so we need to model certainty. And that is simply modelled as:
+In the specification above we used the language of *certain victory* or *certain loss*, so we need to model certainty. And that is modelled as:
 
 ```haskell
 certainly :: a -> Dist a
@@ -99,7 +99,7 @@ switching = do
   else {- switching will -} certainly Win
 ```
 
-The comment `{- switching will -}` is simply added such that the specification almost translates to *literal* English. Now, we can observe the distributions:
+The comment `{- switching will -}` is added such that the specification almost translates to *literal* English. Now, we can observe the distributions:
 
 ```haskell
 > switching
@@ -116,7 +116,7 @@ Loss | 0.3333
 Loss | 0.3333
 ```
 
-Our computation proceeds by certainly losing if we switch after winning the first round, while certainly winning if we switch after losing the first round. Hence the calculation proceeds as:
+Our computation proceeds by *certainly* losing if we switch after winning the first round, while *certainly* winning if we switch after losing the first round. Hence the calculation proceeds as:
 
 ```haskell
  Win ~> certainly Loss| 0.3333 * 1.0
@@ -137,5 +137,5 @@ Loss | 0.3333
 
 Hence, the contestant should switch!
 
-Source code for the above available at : [Abhiroop/bayes](https://github.com/Abhiroop/bayes)
+Source code for the above is available at [Abhiroop/bayes](https://github.com/Abhiroop/bayes)
 

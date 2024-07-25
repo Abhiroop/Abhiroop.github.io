@@ -34,9 +34,7 @@ Given the above, we can now define the uniform distribution:
 ```Haskell
 uniform :: [a] -> Dist a
 uniform = Dist . normP . map (, 1.0)
-```
 
-```Haskell
 > uniform [Head, Head, Head, Head, Tail]
 Head | 0.8000
 Tail | 0.2000

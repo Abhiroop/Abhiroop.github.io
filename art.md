@@ -4,7 +4,7 @@ title: Art
 permalink: /art/
 ---
 
-Recently, while watching the phenomenal comedic TV series - Parks and Recreation, I came across a rather funny but thoughtful segment on art. In that episode, the character Tom Haverford (played by Aziz Ansari), who usually has a "cool guy" persona and could never imagine himself sitting in a room appreciating art, ends up, through a series of events, falling in love with [abstract expressionist](https://en.wikipedia.org/wiki/Abstract_expressionism) art.
+Recently, while watching the phenomenal comedic TV series - Parks and Recreation, I came across a rather funny but thoughtful segment on art. In that episode, the character Tom Haverford (played by Aziz Ansari), known for his "cool guy" persona—someone who would never picture himself quietly appreciating art—unexpectedly falls in love with [abstract expressionist](https://en.wikipedia.org/wiki/Abstract_expressionism) art through a series of events.
 
 ![Tom Haverford](https://raw.githubusercontent.com/Abhiroop/Abhiroop.github.io/refs/heads/master/images/jWOXIr9.jpeg)
 

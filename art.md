@@ -12,4 +12,4 @@ Unlike Tom, I have always been fascinated by art and painting, though I have nev
 
 - [The universe is yours](https://abhiroop.github.io/art/universe)
 - [Beautiful Childhood](https://abhiroop.github.io/art/childhood)
-- [Square Limit by M.C.Escher](https://abhiroop.github.io/art/childhood) (Reproduced digitally with Haskell)
+- [Square Limit by M.C.Escher](https://abhiroop.github.io/art/squarelimit) (Reproduced digitally with Haskell)

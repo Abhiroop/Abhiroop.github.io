@@ -5,7 +5,7 @@ permalink: /publications/
 ---
 
 - [Functional Programming for Securing Cloud and Embedded Environments](https://abhiroop.github.io/phd/) [(PhD Thesis)](https://research.chalmers.se/en/publication/540080)
-- [HasTEE+ - Confidential Cloud Computing and Analytics with Haskell](https://abhiroop.github.io/pubs/hastee_plus) - Under submission.
+- [HasTEE+ - Confidential Cloud Computing and Analytics with Haskell](https://abhiroop.github.io/pubs/hastee_plus) - Tech Report.
 - [HasTEE - Confidential Computing on Trusted Execution Environments with Haskell](https://abhiroop.github.io/pubs/hastee) - Haskell Symposium, 2023 - [DOI](https://doi.org/10.1145/3609026.3609731).
 - [Synchron - An API and Runtime for Embedded Systems](https://abhiroop.github.io/pubs/synchron) - ECOOP 2022 - [DOI](https://drops.dagstuhl.de/opus/volltexte/2022/16245/)
 - [Functional Programming for Embedded Systems](https://abhiroop.github.io/lic/) [(Licentiate Thesis)](https://research.chalmers.se/en/publication/529325)

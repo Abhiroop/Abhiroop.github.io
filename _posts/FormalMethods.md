@@ -1,6 +1,6 @@
 A Whirlwind Tour of Formal Methods
 ----------------------------------
-
+Also: CS - Performance, Correctness, Developer Productivity
 Topics:
 
 1. Decision Procedures and Automata (Reachability) (Success stories - ?)
@@ -11,3 +11,5 @@ Topics:
 
 Meta topics:
  Satisfiability, SMT solvers, etc
+
+Lightweight FM: QuickCheck, Runtime Monitoring

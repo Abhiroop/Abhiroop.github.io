@@ -1,7 +1,7 @@
 ---
 layout: page
 title: PyTorch
-permalink: ./mlc/pytorch
+permalink: /mlc/pytorch
 ---
 
 

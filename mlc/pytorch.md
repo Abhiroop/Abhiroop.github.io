@@ -37,7 +37,7 @@ A Tensor is a mathematical object that generalises scalars, vectors and matrices
 - a rank 0 tensor is a scalar
 - a rank 1 tensor is a vector
 - a rank 2 tensor is a matrix
-- rank 3 and above a re higher-dimensional arrays
+- rank 3 and above are higher-dimensional arrays
 
 Some tensor ops in PyTorch (you can explore the entire library in your own time, which is itself a massive undertaking):
 
@@ -59,4 +59,45 @@ print(f"tensor * tensor \n {tensor * tensor}")
 
 ## Matrix Multiplication as tensors
 print(f"tensor @ tensor.T \n {tensor @ tensor.T}")
+```
+
+### torch.autograd
+
+`torch.autograd` is PyTorch's automatic differentiation engine. Automatic Differentiation is a generalisation of the famous backpropagation algorithm that is used to calculate the derivative of the network error with respect to various neural network weights. This forms the foundation of neural network training. This algorithm is important enough to warrant its own space. I happened to give a [Papers We Love talk on automatic differentiation](https://abhiroop.github.io/slides/Automatic%20Differentiation.pdf). If you like video explanations head over to the [3Blue1Brown video](https://www.youtube.com/watch?v=tIeHLnjs5U8).
+
+We will now walkthrough one step of gradient descent using `torch.autograd` on a sample model.
+
+```python
+import torch
+import torch.nn as nn
+
+# Replace the torchvision resnet18 with a minimal model
+class TinyModel(nn.Module):
+    def __init__(self):
+        super().__init__()
+        # Match the input shape (3*64*64 = 12288) and output 1000 classes
+        self.fc = nn.Linear(3*64*64, 1000)
+
+    def forward(self, x):
+        # Flatten the image: (batch, 3, 64, 64) -> (batch, 3*64*64)
+        x = x.view(x.size(0), -1)
+        return self.fc(x)
+
+model = TinyModel()
+data = torch.rand(1, 3, 64, 64)
+labels = torch.rand(1, 1000)
+
+# Continue with the autograd example
+prediction = model(data)
+loss = (prediction - labels).sum()
+loss.backward()
+
+# Before gradient descent
+print(model.fc.weight)
+
+optim = torch.optim.SGD(model.parameters(), lr=1e-2, momentum=0.9)
+optim.step() #gradient descent
+
+# After gradient descent
+print(model.fc.weight)
 ```

@@ -19,4 +19,4 @@ keeps evolving (eg: JAX might make PyTorch irrelevant in 3 years), but at least 
 links, point to various parts that you can jump to read and understand. I hope you have fun, and excuse my mistakes, as I am myself learning the landscape with you.
 
 
-1. [The PyTorch Frontend](./mlc/pytorch)
+1. [The PyTorch Frontend](/mlc/pytorch)

@@ -27,3 +27,36 @@ python -c "import torch, torch_mlir; print('OK')"
 ```
 
 We have installed `torch`, `torch-mlir`, `matplotlib`, while ensuring version compatibility above. If all goes well you should get 'OK' above.
+
+### Tensors
+
+Even if you are distantly connected to ML compilers, you would have heard of the word "tensor" in some shape or form. Maybe as "Tensor Processing Units", a new architectural component found in modern mobiles (especially those manufactured by Google) or from the library Tensorflow.
+
+A Tensor is a mathematical object that generalises scalars, vectors and matrices to higher dimensions. A Tensor defines something called a rank, which is the dimension or number of indices required to specify components of a tensor. For eg:
+
+- a rank 0 tensor is a scalar
+- a rank 1 tensor is a vector
+- a rank 2 tensor is a matrix
+- rank 3 and above a re higher-dimensional arrays
+
+Some tensor ops in PyTorch (you can explore the entire library in your own time, which is itself a massive undertaking):
+
+```python
+import torch
+
+## initialising a rank 2 tensor
+data = [[1, 2], [3, 4]]
+x_data = torch.tensor(data)
+
+tensor = torch.rand(3, 4) ## 2 dimensional tensor so as to not explode your brains with higher dimensions
+
+print(f"Shape of tensor: {tensor.shape}")
+print(f"Datatype of tensor: {tensor.dtype}")
+print(f"Device tensor is stored on: {tensor.device}")
+
+## Tensor Multiplication
+print(f"tensor * tensor \n {tensor * tensor}")
+
+## Matrix Multiplication as tensors
+print(f"tensor @ tensor.T \n {tensor @ tensor.T}")
+```

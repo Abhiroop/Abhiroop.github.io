@@ -71,7 +71,7 @@ We will now walkthrough one step of gradient descent using `torch.autograd` on a
 import torch
 import torch.nn as nn
 
-# Replace the torchvision resnet18 with a minimal model
+# A minimal model substituting resnet
 class TinyModel(nn.Module):
     def __init__(self):
         super().__init__()
@@ -101,3 +101,13 @@ optim.step() #gradient descent
 # After gradient descent
 print(model.fc.weight)
 ```
+
+This will not be a full scale machine learning tutorial so I will explain the code above very briefly in terms of small notes:
+
+1. `self.fc = nn.Linear(3*64*64, 1000)` creates a fully connected linear layer with 3 channels, height 64 and width 64. Output has 1000 classes - there are 1000 buckets in the famous ImageNet dataset (like coffee mug, car, etc) and the output will be a distribution among these classes, finally the one with the highest probability, will be chosen.
+2. `forward` does a bunch of things but broadly flattens the image into a single long vector and then self.fc(x) applies the linear layer: it multiplies the flattened input by the weight matrix and adds the bias (essentially Wx + b from my autodiff slides).
+3. `data` is the image to classify, `labels` is a ground-truth vector both randomly generated for example
+4. `prediction = model(data)` first forward pass of AD.
+5. `loss` name implies - calculates how far the forward pass is off from the ground truth.
+6. `loss.backward()` is the reverse pass and stores the gradients in `model.fc.weight.grad`.
+7. `optim.step` uses the gradients to update the weights of the model. 

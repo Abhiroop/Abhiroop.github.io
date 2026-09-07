@@ -110,4 +110,86 @@ This will not be a full scale machine learning tutorial so I will explain the co
 4. `prediction = model(data)` first forward pass of AD.
 5. `loss` name implies - calculates how far the forward pass is off from the ground truth.
 6. `loss.backward()` is the reverse pass and stores the gradients in `model.fc.weight.grad`.
-7. `optim.step` uses the gradients to update the weights of the model. 
+7. `optim.step` uses the gradients to update the weights of the model.
+
+### Neural Networks
+
+With automatic differentiation out of the way, training neural networks in PyTorch is almost a replica of what we saw above. The only notable thing we will show in this snippet is defining the neural network.
+
+A typical training procedure for a neural network is as follows:
+
+1. Define the neural network that has some learnable parameters (or weights)
+2. Iterate over a dataset of inputs
+3. Process input through the network
+4. Compute the loss (how far is the output from being correct)
+5. Propagate gradients back into the network’s parameters
+6. Update the weights of the network, typically using a simple update rule: 
+    `weight = weight - learning_rate * gradient`
+
+We define a small neural network below:
+
+```python
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+
+class Net(nn.Module):
+
+    def __init__(self):
+        super().__init__()
+        # 1 input image channel, 6 output channels, 5x5 square convolution
+        # kernel
+        self.conv1 = nn.Conv2d(1, 6, 5)
+        self.conv2 = nn.Conv2d(6, 16, 5)
+        # an affine operation: y = Wx + b
+        self.fc1 = nn.Linear(16 * 5 * 5, 120)  # 5*5 from image dimension
+        self.fc2 = nn.Linear(120, 84)
+        self.fc3 = nn.Linear(84, 10)
+
+    def forward(self, input):
+        # Convolution layer C1: 1 input image channel, 6 output channels,
+        # 5x5 square convolution, it uses RELU activation function, and
+        # outputs a Tensor with size (N, 6, 28, 28), where N is the size of the batch
+        c1 = F.relu(self.conv1(input))
+        # Subsampling layer S2: 2x2 grid, purely functional,
+        # this layer does not have any parameter, and outputs a (N, 6, 14, 14) Tensor
+        s2 = F.max_pool2d(c1, (2, 2))
+        # Convolution layer C3: 6 input channels, 16 output channels,
+        # 5x5 square convolution, it uses RELU activation function, and
+        # outputs a (N, 16, 10, 10) Tensor
+        c3 = F.relu(self.conv2(s2))
+        # Subsampling layer S4: 2x2 grid, purely functional,
+        # this layer does not have any parameter, and outputs a (N, 16, 5, 5) Tensor
+        s4 = F.max_pool2d(c3, 2)
+        # Flatten operation: purely functional, outputs a (N, 400) Tensor
+        s4 = torch.flatten(s4, 1)
+        # Fully connected layer F5: (N, 400) Tensor input,
+        # and outputs a (N, 120) Tensor, it uses RELU activation function
+        f5 = F.relu(self.fc1(s4))
+        # Fully connected layer F6: (N, 120) Tensor input,
+        # and outputs a (N, 84) Tensor, it uses RELU activation function
+        f6 = F.relu(self.fc2(f5))
+        # Fully connected layer OUTPUT: (N, 84) Tensor input, and
+        # outputs a (N, 10) Tensor
+        output = self.fc3(f6)
+        return output
+
+
+net = Net()
+print(net)
+
+```
+
+This defines a classic small convolutional neural network (similar to LeNet) for image classification. Once again I will not delve into the details of neural network but make small notes on the code fragments. 
+
+* __init__ sets up the layers:
+  - conv1: conv layer, 1 input channel → 6 output channels, 5×5 kernel (learns 6 filters).
+  - conv2: conv layer, 6 → 16 channels, 5×5 kernel.
+  - fc1, fc2, fc3: fully connected (linear) layers: 400→120, 120→84, 84→10 (10 output classes).
+* forward defines the data flow:
+  - conv1 → ReLU → 2×2 max‑pool (image shrinks 32×32 → 28×28 → 14×14)
+  - conv2 → ReLU → 2×2 max‑pool (14×14 → 10×10 → 5×5)
+  - Flatten to vector of size 16×5×5 = 400
+  - Pass through fc1 (120 units) with ReLU, fc2 (84 units) with ReLU, fc3 (10 outputs, no activation)
+
+The output is a 10‑element tensor representing class scores. The model learns the convolution filters and linear weights via training.

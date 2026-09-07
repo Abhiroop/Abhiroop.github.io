@@ -20,3 +20,4 @@ links, point to various parts that you can jump to read and understand. I hope y
 
 
 1. [The PyTorch Frontend](/mlc/pytorch)
+2. [Extracting MLIR from Torch](/mlc/torchmlir)

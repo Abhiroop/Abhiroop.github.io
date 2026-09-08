@@ -1,6 +1,6 @@
 ---
 layout: page
-title: PyTorch
+title: torch-mlir
 permalink: /mlc/torchmlir
 ---
 

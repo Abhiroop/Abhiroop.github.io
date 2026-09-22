@@ -8,7 +8,9 @@ All development is being carried out in this repo: [https://github.com/Abhiroop/
 
 🚧 Work in Progress
 
---------------------------------------------------------------
+-----------------------------------------------------
+
+In the last post we used `torch-mlir` to emit MLIR code fragment and now we will use MLIR (the defacto choice of machine learning compilers) to optimise our computational graph. But first, lets not take lightly the hassle of setting up MLIR. The MLIR project lives within the LLVM main repo, which as of this writing sits on version 23. For this write up I will use LLVM 21.
 
 CMakeLists.txt
 

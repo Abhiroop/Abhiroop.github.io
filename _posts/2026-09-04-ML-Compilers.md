@@ -21,5 +21,6 @@ links, point to various parts that you can jump to read and understand. I hope y
 
 1. [The PyTorch Frontend](/mlc/pytorch)
 2. [Extracting MLIR from Torch](/mlc/torchmlir)
-3. [Setting up the monster that is MLIR](/mlc/mlirsetup) 
-4. [Intro to MLIR with the Toy example](/mlc/mlirtoy) (🚧 Work in Progress)
+3. [Lowering to MLIR dialects with xDSL](/mlc/xdsl) (🚧 Work in Progress)
+4. [Setting up the monster that is MLIR](/mlc/mlirsetup) 
+5. [Intro to MLIR with the Toy example](/mlc/mlirtoy) (🚧 Work in Progress)
